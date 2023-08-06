@@ -309,6 +309,11 @@ export default class RoomClient
 		else
 			this._maxSpotlights = config.mobileLastN;
 
+		const urlParser = new URL(window.location);
+		const parameters = urlParser.searchParams;
+
+		this._maxSpotlights = parameters.get('lastN') || this._maxSpotlights;
+
 		store.dispatch(
 			settingsActions.setLastN(this._maxSpotlights));
 
@@ -4540,13 +4545,14 @@ export default class RoomClient
 				{
 					stream = await this._screenSharing.start({
 						...getVideoConstrains(screenSharingResolution, aspectRatio),
-						frameRate : screenSharingFrameRate,
+						frameRate          : screenSharingFrameRate,
 						sampleRate,
 						channelCount,
 						autoGainControl,
 						echoCancellation,
 						noiseSuppression,
-						sampleSize
+						sampleSize,
+						selfBrowserSurface : 'include'
 					});
 
 				}
@@ -4554,7 +4560,8 @@ export default class RoomClient
 				{
 					stream = await this._screenSharing.start({
 						...getVideoConstrains(screenSharingResolution, aspectRatio),
-						frameRate : screenSharingFrameRate
+						frameRate          : screenSharingFrameRate,
+						selfBrowserSurface : 'include'
 					});
 
 				}

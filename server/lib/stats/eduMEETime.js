@@ -101,6 +101,7 @@ const getAllLogs = async function()
 			{
 				const user = {...row};
 				sessionMap[user.session_id].users.push(user);
+				delete user.session_id;
 			}
 	
 			resolve(data);

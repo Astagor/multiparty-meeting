@@ -716,6 +716,12 @@ class Room extends EventEmitter
 					this._lobby.promoteAllPeers();
 				}
 			}
+
+			logger.error('PEER %o', peer);
+
+			// eduMEETime.userJoining(roomId, email);
+			// eduMEETime.dumpDb();
+
 		})
 			.catch((error) =>
 			{

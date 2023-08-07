@@ -54,17 +54,12 @@ module.exports.dumpDb = function()
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	logger.error('------ SESSIONS START ------');
 	db.each("SELECT rowid, room_id, created_on, closed_on FROM sessions", (err, row) => {
-		logger.error('%o', row);
+		logger.error('Session: %o', row);
 	});
-	logger.error('------ SESSIONS END ------');
-
-	logger.error('------ USERS START ------');
 	db.each("SELECT rowid, session_id, email, start, end FROM users", (err, row) => {
-		logger.error('%o', row);
+		logger.error('User: %o', row);
 	});
-	logger.error('------ USERS END ------');
 };
 
 module.exports.roomCreated = function(roomId)

@@ -717,7 +717,7 @@ class Room extends EventEmitter
 				}
 			}
 
-			logger.error('PEER %o', peer);
+			logger.error(' !!!!!!!!!!!!!!!!!!!!   PEER %o', peer._email);
 
 			// eduMEETime.userJoining(roomId, email);
 			// eduMEETime.dumpDb();

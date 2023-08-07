@@ -7,9 +7,15 @@ const dbPath = __dirname + '/../../../lib/stats/eduMEETime.db';
 
 import { config } from '../config/config';
 
+
+let xxx = '0000000000000000000000000000000000000000000000';
+
+
 module.exports.init = function()
 {
 	logger.error('STATS Init DB');
+
+	xxx = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 	let createNewDb = true;
 
@@ -57,6 +63,8 @@ module.exports.dumpDb = function()
 		logger.error('%o', row);
 	});
 	logger.error('------ USERS END ------');
+
+	logger.error(xxx);
 
 	db.close();
 };

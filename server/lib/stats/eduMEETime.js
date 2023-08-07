@@ -68,7 +68,7 @@ module.exports.init = function()
 	});
 };
 
-const dumpDb = async function()
+const dumpDb = function()
 {
 	logger.error('dumpDb: %o', JSON.stringify(getAllLogs()));
 };

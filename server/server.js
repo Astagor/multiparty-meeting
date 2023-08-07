@@ -164,7 +164,7 @@ async function run()
 		}
 
 		eduMEETime.init();
-		// eduMEETime.dumpDb();
+		eduMEETime.dumpDb();
 
 		// Run a mediasoup Worker.
 		await runMediasoupWorkers();

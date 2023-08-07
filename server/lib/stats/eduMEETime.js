@@ -23,7 +23,7 @@ module.exports.init = function()
 	if (fs.existsSync(dbPath))
 		createNewDb = false;
 
-	const db = new sqlite3.Database(dbPath);
+	db = new sqlite3.Database(dbPath);
 
 	if (createNewDb)
 	{

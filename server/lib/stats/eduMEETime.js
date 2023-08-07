@@ -87,6 +87,7 @@ const dumpDb = function()
 
 			const session = {...row};
 			session.users = [];
+			data.push(session);
 
 			db.each('SELECT * FROM users WHERE session_id = ?', [row.session_id], (err, row) => {
 				logger.error('User: %o', row);

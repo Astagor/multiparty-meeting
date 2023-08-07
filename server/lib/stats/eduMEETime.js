@@ -8,14 +8,15 @@ const dbPath = __dirname + '/../../../lib/stats/eduMEETime.db';
 import { config } from '../config/config';
 
 
-let xxx = '0000000000000000000000000000000000000000000000';
+let db = null;
 
 
 module.exports.init = function()
 {
 	logger.error('STATS Init DB');
 
-	xxx = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+	if (db)
+		return;
 
 	let createNewDb = true;
 
@@ -44,13 +45,14 @@ module.exports.init = function()
 			db.run('UPDATE sessions SET closed_on = '+now+' WHERE closed_on = 0');
 		});
 	}
-
-	db.close();
 };
 
 module.exports.dumpDb = function()
 {
-	const db = new sqlite3.Database(dbPath);
+	logger.error('STATS DUMP');
+
+	if (!db)
+		throw new Error('DB not initialized!');
 
 	logger.error('------ SESSIONS START ------');
 	db.each("SELECT rowid, room_id, created_on, closed_on FROM sessions", (err, row) => {
@@ -63,36 +65,33 @@ module.exports.dumpDb = function()
 		logger.error('%o', row);
 	});
 	logger.error('------ USERS END ------');
-
-	logger.error(xxx);
-
-	db.close();
 };
 
 module.exports.roomCreated = function(roomId)
 {
+	if (!db)
+		throw new Error('DB not initialized!');
+
 	logger.error('STATS Room created');
 
-	const db = new sqlite3.Database(dbPath);
 	const now = Date.now();
 
 	db.serialize(() => {
 		db.run('INSERT INTO sessions (room_id, created_on) VALUES ("'+roomId+'", '+now+')');
 	});
 
-	db.close();
 };
 
 module.exports.roomClosed = function(roomId)
 {
 	logger.error('STATS Room closed');
 
-	const db = new sqlite3.Database(dbPath);
+	if (!db)
+		throw new Error('DB not initialized!');
+
 	const now = Date.now();
 
 	db.serialize(() => {
 		db.run('UPDATE sessions SET closed_on = '+now+' WHERE room_id = "'+roomId+'" AND closed_on = 0');
 	});
-
-	db.close();
 };

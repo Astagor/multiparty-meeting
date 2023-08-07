@@ -68,37 +68,48 @@ module.exports.init = function()
 	});
 };
 
-const dumpDb = function()
+const dumpDb = async function()
 {
 	logger.error('DUMP');
 
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	db.all('SELECT * FROM sessions', (err, rowsS) => {
+
+	const result = await new Promise((resolve, reject) => 
+	{
 		const data = [];
 		const sessionMap = {};
 
-		for (let rowS of rowsS)
-		{
-			const session = {...rowS};
-			session.users = [];
-			data.push(session);
-			sessionMap[session.session_id] = session;
-		}
+		db.all('SELECT * FROM sessions', (err, rows) => {
+	
+			if (err)
+				reject([]);
 
-		logger.error('1111111111111111111111 %o', sessionMap);
-
-		db.all('SELECT * FROM users', (err, rowsU) => {
-			for (let rowU of rowsU)
+			for (let row of rows)
 			{
-				const user = {...rowU};
+				const session = {...row};
+				session.users = [];
+				data.push(session);
+				sessionMap[session.session_id] = session;
+			}
+		});
+	
+		db.all('SELECT * FROM users', (err, rows) => {
+			if (err)
+				reject([]);
+
+			for (let row of rows)
+			{
+				const user = {...row};
 				sessionMap[user.session_id].users.push(user);
 			}
-
-			logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', JSON.stringify(data));
+	
+			resolve(data);
 		});
 	});
+
+	logger.error('DDDDDDDDDDDDDDDDDDDDDDDDDDDD %o', JSON.stringify(result));
 };
 
 module.exports.roomCreated = function(roomId, sessionId)

@@ -83,7 +83,7 @@ module.exports.roomClosed = function(roomId)
 	const now = Date.now();
 
 	db.serialize(() => {
-		db.run('UPDATE sessions SET closed_on = '+now+' WHERE room_id IS "'+roomId+'"" AND closed_on = 0');
+		db.run('UPDATE sessions SET closed_on = '+now+' WHERE room_id = "'+roomId+'" AND closed_on = 0');
 	});
 
 	db.close();

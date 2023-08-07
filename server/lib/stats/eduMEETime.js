@@ -47,13 +47,13 @@ module.exports.dumpDb = function()
 	const db = new sqlite3.Database(dbPath);
 
 	logger.error('------ SESSIONS START ------');
-	db.each("SELECT * FROM sessions", (err, row) => {
+	db.each("SELECT rowid, room_id, created_on, closed_on FROM sessions", (err, row) => {
 		logger.error('%o', row);
 	});
 	logger.error('------ SESSIONS END ------');
 
 	logger.error('------ USERS START ------');
-	db.each("SELECT * FROM users", (err, row) => {
+	db.each("SELECT rowid, session_id, email, start, end FROM users", (err, row) => {
 		logger.error('%o', row);
 	});
 	logger.error('------ USERS END ------');

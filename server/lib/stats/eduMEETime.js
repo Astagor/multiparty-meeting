@@ -75,22 +75,22 @@ const dumpDb = function()
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	db.all('SELECT * FROM sessions', (err, rows) => {
+	db.all('SELECT * FROM sessions', (err, rowsS) => {
 		const data = [];
 		const sessionMap = {};
 
-		for (row of rows)
+		for (rowS of rowsS)
 		{
-			const session = {...row};
+			const session = {...rowS};
 			session.users = [];
 			data.push(session);
 			sessionMap[row.sesson_id] = session;
 		}
 
-		db.all('SELECT * FROM users', (err, rows) => {
-			for (row of rows)
+		db.all('SELECT * FROM users', (err, rowsU) => {
+			for (rowU of rowsU)
 			{
-				const user = {...row};
+				const user = {...rowU};
 				sessionMap[row.sesson_id].push(user);
 			}
 

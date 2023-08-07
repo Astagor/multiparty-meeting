@@ -9,6 +9,8 @@ import { config } from '../config/config';
 
 module.exports.init = function()
 {
+	logger.error('STATS Init DB');
+
 	if (db)
 		return;
 
@@ -39,16 +41,18 @@ module.exports.init = function()
 
 module.exports.close = function()
 {
+	logger.error('STATS close DB');
+
 	if (db)
 		db.close();
 };
 
 module.exports.roomCreated = function(roomId)
 {
+	logger.error('STATS Room created');
+
 	if (db)
 		throw new Error('DB not opened!');
-
-	logger.error('STATS Room created');
 
 	const now = Date.now();
 
@@ -60,10 +64,10 @@ module.exports.roomCreated = function(roomId)
 
 module.exports.roomClosed = function(roomId)
 {
+	logger.error('STATS Room closed');
+
 	if (db)
 		throw new Error('DB not opened!');
-
-	logger.error('STATS Room closed');
 
 	const now = Date.now();
 

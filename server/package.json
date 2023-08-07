@@ -46,7 +46,7 @@
 		"mediasoup": "3.12.8",
 		"openid-client": "^5.3.1",
 		"os-utils": "^0.0.14",
-		"passport": "^0.6.0",
+		"passport": "^0.4.0",
 		"passport-local": "^1.0.0",
 		"passport-lti": "0.0.7",
 		"passport-saml": "^3.1.0",

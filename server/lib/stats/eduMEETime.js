@@ -30,11 +30,9 @@ module.exports.init = function()
 	{
 		logger.error('CREATING TABLES');
 		
-		db.serialize(() => {
-			db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
-			db.run('CREATE TABLE users (session_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
-			dumpDb();
-		});
+		db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
+		db.run('CREATE TABLE users (session_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
+		dumpDb();
 	}
 	else
 	{
@@ -42,11 +40,9 @@ module.exports.init = function()
 
 		const now = Date.now();
 
-		db.serialize(() => {
-			db.run('UPDATE users SET end = ? WHERE end = 0', [now]);
-			db.run('UPDATE sessions SET closed_on = ? WHERE closed_on = 0', [now]);
-			dumpDb();
-		});
+		db.run('UPDATE users SET end = ? WHERE end = 0', [now]);
+		db.run('UPDATE sessions SET closed_on = ? WHERE closed_on = 0', [now]);
+		dumpDb();
 	}
 
 	const app = express();
@@ -79,27 +75,28 @@ const dumpDb = function()
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	const data = [];
+	db.all('SELECT * FROM sessions', (err, rows) => {
+		const data = [];
+		const sessionMap = {};
 
-	db.serialize(() => {
-		db.each('SELECT * FROM sessions', (err, row) => {
-			logger.error('Session: %o', row);
-
+		for (row of rows)
+		{
 			const session = {...row};
 			session.users = [];
 			data.push(session);
+			sessionMap[row.sesson_id] = session;
+		}
 
-			db.each('SELECT * FROM users WHERE session_id = ?', [row.session_id], (err, row) => {
-				logger.error('User: %o', row);
+		db.all('SELECT * FROM users', (err, rows) => {
+			for (row of rows)
+			{
 				const user = {...row};
-				session.users.push(user);
-			});
+				sessionMap[row.sesson_id].push(user);
+			}
+
+			logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
 		});
 	});
-
-	db.close();
-
-	logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
 };
 
 module.exports.roomCreated = function(roomId, sessionId)
@@ -111,10 +108,8 @@ module.exports.roomCreated = function(roomId, sessionId)
 
 	const now = Date.now();
 
-	db.serialize(() => {
-		db.run('INSERT INTO sessions (room_id, session_id, created_on) VALUES (?, ?, ?)', [roomId, sessionId, now]);
-		dumpDb();
-	});
+	db.run('INSERT INTO sessions (room_id, session_id, created_on) VALUES (?, ?, ?)', [roomId, sessionId, now]);
+	dumpDb();
 
 };
 
@@ -127,11 +122,10 @@ module.exports.roomClosed = function(sessionId)
 
 	const now = Date.now();
 
-	db.serialize(() => {
-		db.run('UPDATE users SET end = ? WHERE session_id = ? AND end = 0', [now, sessionId]);
-		db.run('UPDATE sessions SET closed_on = ? WHERE session_id = ? AND closed_on = 0', [now, sessionId]);
-		dumpDb();
-	});
+	db.run('UPDATE users SET end = ? WHERE session_id = ? AND end = 0', [now, sessionId]);
+	db.run('UPDATE sessions SET closed_on = ? WHERE session_id = ? AND closed_on = 0', [now, sessionId]);
+	dumpDb();
+
 };
 
 module.exports.peerJoined = function(sessionId, email)
@@ -146,10 +140,8 @@ module.exports.peerJoined = function(sessionId, email)
 
 	const now = Date.now();
 
-	db.serialize(() => {
-		db.run('INSERT INTO users (session_id, email, start) VALUES (?, ?, ?)', [sessionId, email, now]);
-		dumpDb();
-	});
+	db.run('INSERT INTO users (session_id, email, start) VALUES (?, ?, ?)', [sessionId, email, now]);
+	dumpDb();
 
 };
 
@@ -165,9 +157,7 @@ module.exports.peerLeft = function(sessionId, email)
 
 	const now = Date.now();
 
-	db.serialize(() => {
-		db.run('UPDATE users SET end = ? WHERE session_id = ? AND email = ? AND end = 0', [now, sessionId, email]);
-		dumpDb();
-	});
+	db.run('UPDATE users SET end = ? WHERE session_id = ? AND email = ? AND end = 0', [now, sessionId, email]);
+	dumpDb();
 
 };

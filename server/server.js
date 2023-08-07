@@ -592,6 +592,10 @@ async function setupAuth()
 					});
 				}
 
+				logger.error('1111111111111111111111111111111111111111111');
+				logger.error('%o', req.user);
+				logger.error('1111111111111111111111111111111111111111111');
+
 				peer.authenticated = true;
 
 				res.send(loginHelper({
@@ -804,6 +808,11 @@ async function runWebSocketServer()
 				peer.picture = picture;
 				peer.email = email;
 				peer.authenticated = true;
+
+				logger.error('2222222222222222222222222222222222222222222');
+				logger.error('%o', socket.handshake.session.passport.user);
+				logger.error('2222222222222222222222222222222222222222222');
+
 
 				if (typeof config.userMapping === 'function')
 				{

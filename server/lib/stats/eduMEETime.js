@@ -79,7 +79,7 @@ const dumpDb = function()
 		const data = [];
 		const sessionMap = {};
 
-		for (rowS of rowsS)
+		for (const rowS of rowsS)
 		{
 			const session = {...rowS};
 			session.users = [];
@@ -88,7 +88,7 @@ const dumpDb = function()
 		}
 
 		db.all('SELECT * FROM users', (err, rowsU) => {
-			for (rowU of rowsU)
+			for (const rowU of rowsU)
 			{
 				const user = {...rowU};
 				sessionMap[row.sesson_id].push(user);

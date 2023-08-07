@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const userRoles = require('./access/roles');
 
-const eduMEETime = require('./lib/stats/eduMEETime');
+const eduMEETime = require('./stats/eduMEETime');
 
 import {
 	BYPASS_ROOM_LOCK,

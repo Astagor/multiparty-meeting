@@ -46,6 +46,8 @@ const RedisStore = require('connect-redis')(expressSession);
 const sharedSession = require('express-socket.io-session');
 const { v4: uuidv4 } = require('uuid');
 
+const eduMEETime = require('./lib/stats/eduMEETime');
+
 if (configError)
 {
 	/* eslint-disable no-console */
@@ -160,6 +162,8 @@ async function run()
 		{
 			await setupAuth();
 		}
+
+		eduMEETime.init();
 
 		// Run a mediasoup Worker.
 		await runMediasoupWorkers();

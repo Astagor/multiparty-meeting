@@ -41,7 +41,7 @@ module.exports.init = function()
 		const now = Date.now();
 
 		db.serialize(() => {
-			db.run('UPDATE users SET end = "+now+" WHERE end = 0');
+			db.run('UPDATE users SET end = '+now+' WHERE end = 0');
 			db.run('UPDATE sessions SET closed_on = '+now+' WHERE closed_on = 0');
 		});
 	}

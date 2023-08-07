@@ -113,6 +113,8 @@ const getAllLogs = async function()
 		});
 	});
 
+	logger.error('XXXXXX: %o', JSON.stringify(result));
+
 	return result;
 };
 

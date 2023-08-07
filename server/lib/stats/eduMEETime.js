@@ -87,6 +87,8 @@ const dumpDb = function()
 			sessionMap[session.session_id] = session;
 		}
 
+		logger.error('1111111111111111111111 %o', sessionMap);
+
 		db.all('SELECT * FROM users', (err, rowsU) => {
 			for (let rowU of rowsU)
 			{

@@ -79,10 +79,9 @@ const dumpDb = function()
 	if (!db)
 		throw new Error('DB not initialized!');
 
-
-	const data = [];
-
 	db.serialize(() => {
+		const data = [];
+
 		db.each('SELECT * FROM sessions', (err, row) => {
 			logger.error('Session: %o', row);
 
@@ -95,9 +94,9 @@ const dumpDb = function()
 				session.users.push(user);
 			});
 		});
-	});
 
-	logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
+		logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
+	});
 };
 
 module.exports.roomCreated = function(roomId, sessionId)

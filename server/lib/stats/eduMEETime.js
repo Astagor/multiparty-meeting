@@ -40,6 +40,8 @@ module.exports.init = function()
 
 module.exports.dumpDb = function()
 {
+	const db = new sqlite3.Database(dbPath);
+
 	logger.error('------ SESSIONS START ------');
 	db.each("SELECT * FROM sessions", (err, row) => {
 		logger.error('%o', row);
@@ -51,6 +53,8 @@ module.exports.dumpDb = function()
 		logger.error('%o', row);
 	});
 	logger.error('------ USERS END ------');
+
+	db.close();
 };
 
 module.exports.roomCreated = function(roomId)

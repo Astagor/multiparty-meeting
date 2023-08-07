@@ -2,6 +2,7 @@ const fs = require('fs');
 import Logger from '../logger/Logger';
 const logger = new Logger('eduMEETime');
 const sqlite3 = require('sqlite3').verbose();
+const express = require('express');
 
 const dbPath = __dirname + '/../../../lib/stats/eduMEETime.db';
 
@@ -13,7 +14,7 @@ let db = null;
 
 module.exports.init = function()
 {
-	logger.error('STATS Init DB');
+	logger.error('Init DB');
 
 	if (db)
 		return;
@@ -27,7 +28,7 @@ module.exports.init = function()
 
 	if (createNewDb)
 	{
-		logger.error('STATS CREATING TABLES');
+		logger.error('CREATING TABLES');
 		
 		db.serialize(() => {
 			db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
@@ -37,7 +38,7 @@ module.exports.init = function()
 	}
 	else
 	{
-		logger.error('STATS CLEANING UP');
+		logger.error('CLEANING UP');
 
 		const now = Date.now();
 
@@ -47,20 +48,44 @@ module.exports.init = function()
 			dumpDb();
 		});
 	}
+
+	const app = express();
+
+	app.get('/', async (req, res) =>
+	{
+		logger.error(`GET ${req.originalUrl}`);
+
+		res.set('Content-Type', 'application/json');
+
+		const data = [];
+
+		
+
+		res.end(data);
+	});
+
+	const server = app.listen(9999, '127.0.0.1', () =>
+	{
+		const address = server.address();
+
+		logger.info(`listening ${address.address}:${address.port}`);
+	});
 };
 
 const dumpDb = function()
 {
-	logger.error('STATS DUMP');
+	logger.error('DUMP');
 
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	db.each("SELECT * FROM sessions", (err, row) => {
-		logger.error('Session: %o', row);
-	});
-	db.each("SELECT * FROM users", (err, row) => {
-		logger.error('User: %o', row);
+	db.serialize(() => {
+		db.each('SELECT * FROM sessions', (err, row) => {
+			logger.error('Session: %o', row);
+			db.each('SELECT * FROM users WHERE session_id = ?', [row.session_id], (err, row) => {
+				logger.error('User: %o', row);
+			});
+		});
 	});
 };
 
@@ -69,7 +94,7 @@ module.exports.roomCreated = function(roomId, sessionId)
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	logger.error('STATS Room created');
+	logger.error('Room created');
 
 	const now = Date.now();
 
@@ -82,7 +107,7 @@ module.exports.roomCreated = function(roomId, sessionId)
 
 module.exports.roomClosed = function(sessionId)
 {
-	logger.error('STATS Room closed');
+	logger.error('Room closed');
 
 	if (!db)
 		throw new Error('DB not initialized!');
@@ -101,7 +126,7 @@ module.exports.peerJoined = function(sessionId, email)
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	logger.error('STATS Peer joined');
+	logger.error('Peer joined');
 
 	if (!email)
 		return;
@@ -120,7 +145,7 @@ module.exports.peerLeft = function(sessionId, email)
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	logger.error('STATS Peer joined');
+	logger.error('Peer joined');
 
 	if (!email)
 		return;

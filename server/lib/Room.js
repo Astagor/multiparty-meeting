@@ -288,7 +288,6 @@ class Room extends EventEmitter
 		this._tokens = new Map();
 
 		eduMEETime.roomCreated(this._roomId, this._uuid);
-		eduMEETime.dumpDb();
 	}
 
 	isLocked()
@@ -307,7 +306,6 @@ class Room extends EventEmitter
 		this._queue = null;
 
 		eduMEETime.roomClosed(this._uuid);
-		eduMEETime.dumpDb();
 
 		if (this._selfDestructTimeout)
 			clearTimeout(this._selfDestructTimeout);
@@ -718,7 +716,6 @@ class Room extends EventEmitter
 			}
 
 			eduMEETime.peerJoined(this._uuid, peer.email);
-			eduMEETime.dumpDb();
 
 		})
 			.catch((error) =>
@@ -866,7 +863,6 @@ class Room extends EventEmitter
 		}
 
 		eduMEETime.peerLeft(this._uuid, peer.email);
-		eduMEETime.dumpDb();
 
 		// If this is the last Peer in the room and
 		// lobby is empty, close the room after a while.

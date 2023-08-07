@@ -32,6 +32,7 @@ module.exports.init = function()
 		db.serialize(() => {
 			db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
 			db.run('CREATE TABLE users (session_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
+			dumpDb();
 		});
 	}
 	else
@@ -43,11 +44,12 @@ module.exports.init = function()
 		db.serialize(() => {
 			db.run('UPDATE users SET end = '+now+' WHERE end = 0');
 			db.run('UPDATE sessions SET closed_on = '+now+' WHERE closed_on = 0');
+			dumpDb();
 		});
 	}
 };
 
-module.exports.dumpDb = function()
+const dumpDb = function()
 {
 	logger.error('STATS DUMP');
 
@@ -73,6 +75,7 @@ module.exports.roomCreated = function(roomId, sessionId)
 
 	db.serialize(() => {
 		db.run('INSERT INTO sessions (room_id, session_id, created_on) VALUES ("'+roomId+'", "'+sessionId+'", '+now+')');
+		dumpDb();
 	});
 
 };
@@ -89,6 +92,7 @@ module.exports.roomClosed = function(sessionId)
 	db.serialize(() => {
 		db.run('UPDATE users SET end = '+now+' WHERE session_id = "'+sessionId+'" AND end = 0');
 		db.run('UPDATE sessions SET closed_on = '+now+' WHERE session_id = "'+sessionId+'" AND closed_on = 0');
+		dumpDb();
 	});
 };
 
@@ -103,6 +107,7 @@ module.exports.peerJoined = function(sessionId, email)
 
 	db.serialize(() => {
 		db.run('INSERT INTO users (session_id, email, start) VALUES ("'+sessionId+'", "'+email+'", '+now+')');
+		dumpDb();
 	});
 
 };
@@ -118,6 +123,7 @@ module.exports.peerLeft = function(sessionId, email)
 
 	db.serialize(() => {
 		db.run('UPDATE users SET end = '+now+' WHERE session_id = "'+sessionId+'" AND email = "'+email+'" AND end = 0');
+		dumpDb();
 	});
 
 };

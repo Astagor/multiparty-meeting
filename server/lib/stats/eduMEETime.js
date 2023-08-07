@@ -50,14 +50,8 @@ module.exports.init = function()
 	app.get('/', async (req, res) =>
 	{
 		logger.error(`GET ${req.originalUrl}`);
-
 		res.set('Content-Type', 'application/json');
-
-		const data = [];
-
-		
-
-		res.end(data);
+		res.end(JSON.stringify(await getAllLogs()));
 	});
 
 	const server = app.listen(9999, '127.0.0.1', () =>
@@ -112,8 +106,6 @@ const getAllLogs = async function()
 			resolve(data);
 		});
 	});
-
-	logger.error('XXXXXX: %o', JSON.stringify(result));
 
 	return result;
 };

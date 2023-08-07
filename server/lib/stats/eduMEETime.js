@@ -84,14 +84,14 @@ const dumpDb = function()
 			const session = {...rowS};
 			session.users = [];
 			data.push(session);
-			sessionMap[row.sesson_id] = session;
+			sessionMap[session.sesson_id] = session;
 		}
 
 		db.all('SELECT * FROM users', (err, rowsU) => {
 			for (let rowU of rowsU)
 			{
 				const user = {...rowU};
-				sessionMap[row.sesson_id].push(user);
+				sessionMap[user.sesson_id].push(user);
 			}
 
 			logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);

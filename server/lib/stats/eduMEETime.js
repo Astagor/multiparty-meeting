@@ -122,7 +122,8 @@ module.exports.peerLeft = function(sessionId, email)
 
 	logger.error('STATS Peer joined');
 
-	logger.error('STATS XXXXXXXXXXXXXXXXXXXXXXXXXXX %o', email);
+	if (!email)
+		return;
 
 	const now = Date.now();
 

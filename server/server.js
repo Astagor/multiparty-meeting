@@ -596,6 +596,10 @@ async function setupAuth()
 					});
 				}
 
+				logger.error('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+				logger.error('info %o', req.user._userinfo);
+				logger.error('peer.email %o', peer.email);
+
 				peer.authenticated = true;
 
 				res.send(loginHelper({

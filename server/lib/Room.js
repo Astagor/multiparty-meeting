@@ -287,7 +287,7 @@ class Room extends EventEmitter
 
 		this._tokens = new Map();
 
-		eduMEETime.roomCreated(roomId, '111');
+		eduMEETime.roomCreated(roomId);
 	}
 
 	isLocked()
@@ -305,7 +305,7 @@ class Room extends EventEmitter
 
 		this._queue = null;
 
-		eduMEETime.roomClosed(this._roomId, '111');
+		eduMEETime.roomClosed(this._roomId);
 
 		if (this._selfDestructTimeout)
 			clearTimeout(this._selfDestructTimeout);

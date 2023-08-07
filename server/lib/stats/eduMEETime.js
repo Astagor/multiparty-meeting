@@ -7,7 +7,7 @@ let db = null;
 
 import { config } from '../config/config';
 
-module.exports.init() = function()
+module.exports.init = function()
 {
 	if (db)
 		return;
@@ -37,7 +37,7 @@ module.exports.init() = function()
 	}
 };
 
-module.exports.close() = function()
+module.exports.close = function()
 {
 	if (db)
 		db.close();

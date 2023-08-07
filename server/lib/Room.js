@@ -9,6 +9,8 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const userRoles = require('./access/roles');
 
+const eduMEETime = require('./lib/stats/eduMEETime');
+
 import {
 	BYPASS_ROOM_LOCK,
 	BYPASS_LOBBY
@@ -284,6 +286,8 @@ class Room extends EventEmitter
 		this._handleAudioLevelObservers();
 
 		this._tokens = new Map();
+
+		eduMEETime.roomCreated(roomId, '111');
 	}
 
 	isLocked()
@@ -300,6 +304,8 @@ class Room extends EventEmitter
 		this._queue.close();
 
 		this._queue = null;
+
+		eduMEETime.roomClosed(this._roomId, '111');
 
 		if (this._selfDestructTimeout)
 			clearTimeout(this._selfDestructTimeout);

@@ -96,7 +96,7 @@ const dumpDb = function()
 				sessionMap[user.session_id].users.push(user);
 			}
 
-			logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
+			logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', JSON.stringify(data));
 		});
 	});
 };

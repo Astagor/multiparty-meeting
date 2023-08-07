@@ -3,6 +3,8 @@ import Logger from '../logger/Logger';
 const logger = new Logger('eduMEETime');
 const sqlite3 = require('sqlite3').verbose();
 
+const dbPath = __dirname + '/../../../lib/stats/eduMEETime.db';
+
 let db = null;
 
 import { config } from '../config/config';
@@ -16,10 +18,10 @@ module.exports.init = function()
 
 	let createNewDb = true;
 
-	if (fs.existsSync('./eduMEETime.db'))
+	if (fs.existsSync(dbPath))
 		createNewDb = false;
 
-	db = new sqlite3.Database('./eduMEETime.db');
+	db = new sqlite3.Database(dbPath);
 
 	if (createNewDb)
 	{

@@ -103,6 +103,9 @@ module.exports.peerJoined = function(sessionId, email)
 
 	logger.error('STATS Peer joined');
 
+	if (!email)
+		return;
+
 	const now = Date.now();
 
 	db.serialize(() => {
@@ -118,6 +121,8 @@ module.exports.peerLeft = function(sessionId, email)
 		throw new Error('DB not initialized!');
 
 	logger.error('STATS Peer joined');
+
+	logger.error('STATS XXXXXXXXXXXXXXXXXXXXXXXXXXX %o', email);
 
 	const now = Date.now();
 

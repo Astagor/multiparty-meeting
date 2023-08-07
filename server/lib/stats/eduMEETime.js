@@ -93,10 +93,10 @@ const dumpDb = function()
 				logger.error('User: %o', row);
 				const user = {...row};
 				session.users.push(user);
+
+				logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
 			});
 		});
-
-		logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);
 	});
 };
 

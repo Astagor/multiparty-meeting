@@ -93,7 +93,7 @@ const dumpDb = function()
 			for (let rowU of rowsU)
 			{
 				const user = {...rowU};
-				sessionMap[user.session_id].push(user);
+				sessionMap[user.session_id].users.push(user);
 			}
 
 			logger.error('CCCCCCCCCCCCCCCCCCCCCCCC %o', data);

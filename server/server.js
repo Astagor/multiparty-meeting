@@ -163,8 +163,8 @@ async function run()
 			await setupAuth();
 		}
 
-		await eduMEETime.init();
-		eduMEETime.dumpDb();
+		eduMEETime.init();
+		// eduMEETime.dumpDb();
 
 		// Run a mediasoup Worker.
 		await runMediasoupWorkers();

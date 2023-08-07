@@ -11,7 +11,7 @@ import { config } from '../config/config';
 let db = null;
 
 
-module.exports.init = async function()
+module.exports.init = function()
 {
 	logger.error('STATS Init DB');
 

@@ -30,8 +30,8 @@ module.exports.init = function()
 		logger.error('STATS CREATING TABLES');
 		
 		db.serialize(() => {
-			db.run('CREATE TABLE sessions (room_id INTEGER, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
-			db.run('CREATE TABLE users (session_id INTEGER, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
+			db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
+			db.run('CREATE TABLE users (session_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
 		});
 	}
 	else
@@ -54,15 +54,15 @@ module.exports.dumpDb = function()
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	db.each("SELECT rowid, room_id, created_on, closed_on FROM sessions", (err, row) => {
+	db.each("SELECT * FROM sessions", (err, row) => {
 		logger.error('Session: %o', row);
 	});
-	db.each("SELECT rowid, session_id, email, start, end FROM users", (err, row) => {
+	db.each("SELECT * FROM users", (err, row) => {
 		logger.error('User: %o', row);
 	});
 };
 
-module.exports.roomCreated = function(roomId)
+module.exports.roomCreated = function(roomId, sessionId)
 {
 	if (!db)
 		throw new Error('DB not initialized!');
@@ -72,12 +72,12 @@ module.exports.roomCreated = function(roomId)
 	const now = Date.now();
 
 	db.serialize(() => {
-		db.run('INSERT INTO sessions (room_id, created_on) VALUES ("'+roomId+'", '+now+')');
+		db.run('INSERT INTO sessions (room_id, session_id, created_on) VALUES ("'+roomId+'", "'+sessionId+'", '+now+')');
 	});
 
 };
 
-module.exports.roomClosed = function(roomId)
+module.exports.roomClosed = function(sessionId)
 {
 	logger.error('STATS Room closed');
 
@@ -87,6 +87,37 @@ module.exports.roomClosed = function(roomId)
 	const now = Date.now();
 
 	db.serialize(() => {
-		db.run('UPDATE sessions SET closed_on = '+now+' WHERE room_id = "'+roomId+'" AND closed_on = 0');
+		db.run('UPDATE users SET end = '+now+' WHERE session_id = "'+sessionId+'" AND end = 0');
+		db.run('UPDATE sessions SET closed_on = '+now+' WHERE session_id = "'+sessionId+'" AND closed_on = 0');
 	});
+};
+
+module.exports.peerJoined = function(sessionId, email)
+{
+	if (!db)
+		throw new Error('DB not initialized!');
+
+	logger.error('STATS Peer joined');
+
+	const now = Date.now();
+
+	db.serialize(() => {
+		db.run('INSERT INTO users (session_id, email, start) VALUES ("'+sessionId+'", "'+email+'", '+now+')');
+	});
+
+};
+
+module.exports.peerLeft = function(sessionId, email)
+{
+	if (!db)
+		throw new Error('DB not initialized!');
+
+	logger.error('STATS Peer joined');
+
+	const now = Date.now();
+
+	db.serialize(() => {
+		db.run('UPDATE users SET end = '+now+' WHERE session_id = "'+sessionId+'" AND email = "'+email+'" AND end = 0');
+	});
+
 };

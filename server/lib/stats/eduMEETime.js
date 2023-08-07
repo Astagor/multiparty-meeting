@@ -20,6 +20,8 @@ module.exports.init = function()
 
 	if (createNewDb)
 	{
+		logger.error('STATS CREATING TABLES');
+		
 		db.serialize(() => {
 			db.run('CREATE TABLE sessions (room_id INTEGER, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
 			db.run('CREATE TABLE users (session_id INTEGER, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
@@ -27,6 +29,8 @@ module.exports.init = function()
 	}
 	else
 	{
+		logger.error('STATS CLEANING UP');
+
 		const now = Date.now();
 
 		db.serialize(() => {

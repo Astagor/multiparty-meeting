@@ -38,6 +38,21 @@ module.exports.init = function()
 	db.close();
 };
 
+module.exports.dumpDb = function()
+{
+	logger.error('------ SESSIONS START ------');
+	db.each("SELECT * FROM sessions", (err, row) => {
+		logger.error('%o', row);
+	});
+	logger.error('------ SESSIONS END ------');
+
+	logger.error('------ USERS START ------');
+	db.each("SELECT * FROM users", (err, row) => {
+		logger.error('%o', row);
+	});
+	logger.error('------ USERS END ------');
+};
+
 module.exports.roomCreated = function(roomId)
 {
 	logger.error('STATS Room created');

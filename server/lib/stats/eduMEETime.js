@@ -68,13 +68,17 @@ module.exports.init = function()
 	});
 };
 
-const dumpDb = async function()
+const dumpDb = function()
 {
-	logger.error('DUMP');
+	logger.error('dumpDb: %o', JSON.stringify(getAllLogs()));
+};
+
+const getAllLogs = async function()
+{
+	logger.error('getAllLogs');
 
 	if (!db)
 		throw new Error('DB not initialized!');
-
 
 	const result = await new Promise((resolve, reject) => 
 	{
@@ -109,7 +113,7 @@ const dumpDb = async function()
 		});
 	});
 
-	logger.error('DDDDDDDDDDDDDDDDDDDDDDDDDDDD %o', JSON.stringify(result));
+	return result;
 };
 
 module.exports.roomCreated = function(roomId, sessionId)

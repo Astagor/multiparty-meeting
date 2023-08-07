@@ -288,6 +288,7 @@ class Room extends EventEmitter
 		this._tokens = new Map();
 
 		eduMEETime.roomCreated(roomId);
+		eduMEETime.dumpDb();
 	}
 
 	isLocked()
@@ -306,6 +307,7 @@ class Room extends EventEmitter
 		this._queue = null;
 
 		eduMEETime.roomClosed(this._roomId);
+		eduMEETime.dumpDb();
 
 		if (this._selfDestructTimeout)
 			clearTimeout(this._selfDestructTimeout);

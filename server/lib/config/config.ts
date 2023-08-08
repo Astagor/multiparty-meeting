@@ -416,6 +416,28 @@ const configSchema = convict({
 			default : ''
 		}
 	},
+	edumeetime : {
+		enabled : {
+			doc     : 'Enables the eduMEETime metrics exporter.',
+			format  : 'Boolean',
+			default : false
+		},
+		listen : {
+			doc     : 'eduMEETime metrics exporter listening address.',
+			format  : 'String',
+			default : 'localhost'
+		},
+		port : {
+			doc     : 'The eduMEETime metrics exporter listening port.',
+			format  : 'port',
+			default : 9999
+		},
+		secret : {
+			doc     : 'The eduMEETime metrics exporter authorization header: `Bearer <secret>` required to allow connection.',
+			format  : String,
+			default : ''
+		}
+	},
 	// User roles
 	// All users have the role "NORMAL" by default. Other roles need to be
 	// added in the "userMapping" function. The following accesses and

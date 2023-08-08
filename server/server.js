@@ -163,7 +163,10 @@ async function run()
 			await setupAuth();
 		}
 
-		eduMEETime.init();
+		if (config.edumeetime.enabled)
+		{
+			eduMEETime.init();
+		}
 
 		// Run a mediasoup Worker.
 		await runMediasoupWorkers();

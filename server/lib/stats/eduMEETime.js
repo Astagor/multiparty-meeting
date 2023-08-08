@@ -14,7 +14,7 @@ let db = null;
 
 module.exports.init = function()
 {
-	logger.error('Init DB');
+	logger.debug('Init DB');
 
 	if (db)
 		return;
@@ -28,7 +28,7 @@ module.exports.init = function()
 
 	if (createNewDb)
 	{
-		logger.error('CREATING TABLES');
+		logger.debug('CREATING TABLES');
 		
 		db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
 		db.run('CREATE TABLE users (session_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
@@ -36,7 +36,7 @@ module.exports.init = function()
 	}
 	else
 	{
-		logger.error('CLEANING UP');
+		logger.debug('CLEANING UP');
 
 		const now = Date.now();
 
@@ -49,12 +49,50 @@ module.exports.init = function()
 
 	app.get('/', async (req, res) =>
 	{
-		logger.error(`GET ${req.originalUrl}`);
+		logger.debug(`GET ${req.originalUrl}`);
+
+		if (config.edumeetime.secret && req.headers.authorization !== `Bearer ${ config.edumeetime.secret}`)
+		{
+			logger.error('Invalid authorization header');
+
+			return res.status(401).end();
+		}
+
 		res.set('Content-Type', 'application/json');
-		res.end(JSON.stringify(await getAllLogs()));
+		res.end(JSON.stringify(await getAllLogs(), null, 4));
 	});
 
-	const server = app.listen(9999, '127.0.0.1', () =>
+	app.get('/current', async (req, res) =>
+	{
+		logger.debug(`GET ${req.originalUrl}`);
+
+		if (config.edumeetime.secret && req.headers.authorization !== `Bearer ${ config.edumeetime.secret}`)
+		{
+			logger.error('Invalid authorization header');
+
+			return res.status(401).end();
+		}
+
+		res.set('Content-Type', 'application/json');
+		res.end(JSON.stringify(await getAllOpenMeetings(), null, 4));
+	});
+
+	app.get('/passed', async (req, res) =>
+	{
+		logger.debug(`GET ${req.originalUrl}`);
+
+		if (config.edumeetime.secret && req.headers.authorization !== `Bearer ${ config.edumeetime.secret}`)
+		{
+			logger.error('Invalid authorization header');
+
+			return res.status(401).end();
+		}
+
+		res.set('Content-Type', 'application/json');
+		res.end(JSON.stringify(await getAllClosedMeetings(), null, 4));
+	});
+
+	const server = app.listen(config.edumeetime.port, config.edumeetime.listen, () =>
 	{
 		const address = server.address();
 
@@ -64,12 +102,113 @@ module.exports.init = function()
 
 const dumpDb = async function()
 {
-	logger.error('dumpDb: %o', JSON.stringify(await getAllLogs()));
+	logger.debug('dumpDb: %o', JSON.stringify(await getAllLogs(), null, 4));
+};
+
+const getAllOpenMeetings = async function()
+{
+	logger.debug('getAllOpenMeetings');
+
+	if (!config.edumeetime.enabled)
+		return;
+
+	if (!db)
+		throw new Error('DB not initialized!');
+
+	const result = await new Promise((resolve, reject) => 
+	{
+		const data = [];
+		const sessionMap = {};
+
+		db.all('SELECT * FROM sessions WHERE closed_on = 0 ORDER BY created_on DESC', (err, rows) => {
+	
+			if (err)
+				reject([]);
+
+			for (let row of rows)
+			{
+				const session = {...row};
+				session.users = [];
+				data.push(session);
+				sessionMap[session.session_id] = session;
+			}
+		});
+	
+		db.all('SELECT * FROM users WHERE end = 0 ORDER BY start ASC', (err, rows) => {
+			if (err)
+				reject([]);
+
+			for (let row of rows)
+			{
+				const user = {...row};
+				sessionMap[user.session_id].users.push(user);
+				delete user.session_id;
+			}
+	
+			resolve(data);
+		});
+	});
+
+	return result;
+};
+
+const getAllClosedMeetings = async function()
+{
+	logger.debug('getAllClosedMeetings');
+
+	if (!config.edumeetime.enabled)
+		return;
+
+	if (!db)
+		throw new Error('DB not initialized!');
+
+	const result = await new Promise((resolve, reject) => 
+	{
+		const data = [];
+		const sessionMap = {};
+
+		db.all('SELECT * FROM sessions WHERE closed_on != 0 ORDER BY created_on DESC', (err, rows) => {
+	
+			if (err)
+				reject([]);
+
+			for (let row of rows)
+			{
+				const session = {...row};
+				session.users = [];
+				data.push(session);
+				sessionMap[session.session_id] = session;
+			}
+		});
+	
+		db.all('SELECT * FROM users ORDER BY start ASC', (err, rows) => {
+			if (err)
+				reject([]);
+
+			for (let row of rows)
+			{
+				const user = {...row};
+				if (user.end === 0)
+				{
+					user.end = sessionMap[user.session_id].closed_on;
+				}
+				sessionMap[user.session_id].users.push(user);
+				delete user.session_id;
+			}
+	
+			resolve(data);
+		});
+	});
+
+	return result;
 };
 
 const getAllLogs = async function()
 {
-	logger.error('getAllLogs');
+	logger.debug('getAllLogs');
+
+	if (!config.edumeetime.enabled)
+		return;
 
 	if (!db)
 		throw new Error('DB not initialized!');
@@ -113,10 +252,13 @@ const getAllLogs = async function()
 
 module.exports.roomCreated = function(roomId, sessionId)
 {
+	logger.debug('Room created');
+
+	if (!config.edumeetime.enabled)
+		return;
+
 	if (!db)
 		throw new Error('DB not initialized!');
-
-	logger.error('Room created');
 
 	const now = Date.now();
 
@@ -127,7 +269,10 @@ module.exports.roomCreated = function(roomId, sessionId)
 
 module.exports.roomClosed = function(sessionId)
 {
-	logger.error('Room closed');
+	logger.debug('Room closed');
+
+	if (!config.edumeetime.enabled)
+		return;
 
 	if (!db)
 		throw new Error('DB not initialized!');
@@ -142,10 +287,13 @@ module.exports.roomClosed = function(sessionId)
 
 module.exports.peerJoined = function(sessionId, email)
 {
+	logger.debug('Peer joined');
+
+	if (!config.edumeetime.enabled)
+		return;
+
 	if (!db)
 		throw new Error('DB not initialized!');
-
-	logger.error('Peer joined');
 
 	if (!email)
 		return;
@@ -159,10 +307,13 @@ module.exports.peerJoined = function(sessionId, email)
 
 module.exports.peerLeft = function(sessionId, email)
 {
+	logger.debug('Peer joined');
+
+	if (!config.edumeetime.enabled)
+		return;
+
 	if (!db)
 		throw new Error('DB not initialized!');
-
-	logger.error('Peer joined');
 
 	if (!email)
 		return;

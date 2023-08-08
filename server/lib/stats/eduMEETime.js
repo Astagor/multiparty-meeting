@@ -79,7 +79,7 @@ const getAllLogs = async function()
 		const data = [];
 		const sessionMap = {};
 
-		db.all('SELECT * FROM sessions', (err, rows) => {
+		db.all('SELECT * FROM sessions ORDER BY created_on DESC', (err, rows) => {
 	
 			if (err)
 				reject([]);
@@ -93,7 +93,7 @@ const getAllLogs = async function()
 			}
 		});
 	
-		db.all('SELECT * FROM users', (err, rows) => {
+		db.all('SELECT * FROM users ORDER BY start ASC', (err, rows) => {
 			if (err)
 				reject([]);
 

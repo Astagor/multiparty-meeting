@@ -127,6 +127,9 @@ const getAllOpenMeetings = async function()
 
 			for (let row of rows)
 			{
+				if (!sessionMap[row.session_id])
+					continue;
+
 				const session = {...row};
 				session.users = [];
 				data.push(session);
@@ -140,6 +143,9 @@ const getAllOpenMeetings = async function()
 
 			for (let row of rows)
 			{
+				if (!sessionMap[row.session_id])
+					continue;
+
 				const user = {...row};
 				sessionMap[user.session_id].users.push(user);
 				delete user.session_id;
@@ -187,6 +193,9 @@ const getAllClosedMeetings = async function()
 
 			for (let row of rows)
 			{
+				if (!sessionMap[row.session_id])
+					continue;
+
 				const user = {...row};
 				if (user.end === 0)
 				{

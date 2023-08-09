@@ -32,7 +32,6 @@ module.exports.init = function()
 		
 		db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
 		db.run('CREATE TABLE users (session_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
-		dumpDb();
 	}
 	else
 	{
@@ -42,7 +41,6 @@ module.exports.init = function()
 
 		db.run('UPDATE users SET end = ? WHERE end = 0', [now]);
 		db.run('UPDATE sessions SET closed_on = ? WHERE closed_on = 0', [now]);
-		dumpDb();
 	}
 
 	const app = express();
@@ -100,7 +98,7 @@ module.exports.init = function()
 	});
 };
 
-const dumpDb = async function()
+module.exports.dumpDb = async function()
 {
 	logger.debug('dumpDb: %o', JSON.stringify(await getAllLogs(), null, 4));
 };
@@ -281,8 +279,6 @@ module.exports.roomCreated = function(roomId, sessionId)
 	const now = Date.now();
 
 	db.run('INSERT INTO sessions (room_id, session_id, created_on) VALUES (?, ?, ?)', [roomId, sessionId, now]);
-	dumpDb();
-
 };
 
 module.exports.roomClosed = function(sessionId)
@@ -299,8 +295,6 @@ module.exports.roomClosed = function(sessionId)
 
 	db.run('UPDATE users SET end = ? WHERE session_id = ? AND end = 0', [now, sessionId]);
 	db.run('UPDATE sessions SET closed_on = ? WHERE session_id = ? AND closed_on = 0', [now, sessionId]);
-	dumpDb();
-
 };
 
 module.exports.peerJoined = function(sessionId, email)
@@ -319,8 +313,6 @@ module.exports.peerJoined = function(sessionId, email)
 	const now = Date.now();
 
 	db.run('INSERT INTO users (session_id, email, start) VALUES (?, ?, ?)', [sessionId, email, now]);
-	dumpDb();
-
 };
 
 module.exports.peerLeft = function(sessionId, email)
@@ -339,6 +331,4 @@ module.exports.peerLeft = function(sessionId, email)
 	const now = Date.now();
 
 	db.run('UPDATE users SET end = ? WHERE session_id = ? AND email = ? AND end = 0', [now, sessionId, email]);
-	dumpDb();
-
 };

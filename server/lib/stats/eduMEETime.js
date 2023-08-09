@@ -120,38 +120,41 @@ const getAllOpenMeetings = async function()
 		const data = [];
 		const sessionMap = {};
 
-		db.all('SELECT * FROM sessions WHERE closed_on = 0 ORDER BY created_on DESC', (err, rows) => {
-	
-			if (err)
-				reject([]);
+		db.serialize(() =>
+		{
+			db.all('SELECT * FROM sessions WHERE closed_on = 0 ORDER BY created_on DESC', (err, rows) => {
 
-			for (let row of rows)
-			{
-				if (!sessionMap[row.session_id])
-					continue;
+				if (err)
+					reject([]);
 
-				const session = {...row};
-				session.users = [];
-				data.push(session);
-				sessionMap[session.session_id] = session;
-			}
-		});
-	
-		db.all('SELECT * FROM users WHERE end = 0 ORDER BY start ASC', (err, rows) => {
-			if (err)
-				reject([]);
+				for (let row of rows)
+				{
+					if (!sessionMap[row.session_id])
+						continue;
 
-			for (let row of rows)
-			{
-				if (!sessionMap[row.session_id])
-					continue;
+					const session = {...row};
+					session.users = [];
+					data.push(session);
+					sessionMap[session.session_id] = session;
+				}
 
-				const user = {...row};
-				sessionMap[user.session_id].users.push(user);
-				delete user.session_id;
-			}
-	
-			resolve(data);
+				db.all('SELECT * FROM users WHERE end = 0 ORDER BY start ASC', (err, rows) => {
+					if (err)
+						reject([]);
+
+					for (let row of rows)
+					{
+						if (!sessionMap[row.session_id])
+							continue;
+
+						const user = {...row};
+						sessionMap[user.session_id].users.push(user);
+						delete user.session_id;
+					}
+
+					resolve(data);
+				});
+			});
 		});
 	});
 
@@ -173,39 +176,42 @@ const getAllClosedMeetings = async function()
 		const data = [];
 		const sessionMap = {};
 
-		db.all('SELECT * FROM sessions WHERE closed_on != 0 ORDER BY created_on DESC', (err, rows) => {
-	
-			if (err)
-				reject([]);
+		db.serialize(() =>
+		{
+			db.all('SELECT * FROM sessions WHERE closed_on != 0 ORDER BY created_on DESC', (err, rows) => {
 
-			for (let row of rows)
-			{
-				const session = {...row};
-				session.users = [];
-				data.push(session);
-				sessionMap[session.session_id] = session;
-			}
-		});
-	
-		db.all('SELECT * FROM users ORDER BY start ASC', (err, rows) => {
-			if (err)
-				reject([]);
+				if (err)
+					reject([]);
 
-			for (let row of rows)
-			{
-				if (!sessionMap[row.session_id])
-					continue;
-
-				const user = {...row};
-				if (user.end === 0)
+				for (let row of rows)
 				{
-					user.end = sessionMap[user.session_id].closed_on;
+					const session = {...row};
+					session.users = [];
+					data.push(session);
+					sessionMap[session.session_id] = session;
 				}
-				sessionMap[user.session_id].users.push(user);
-				delete user.session_id;
-			}
-	
-			resolve(data);
+
+				db.all('SELECT * FROM users ORDER BY start ASC', (err, rows) => {
+					if (err)
+						reject([]);
+
+					for (let row of rows)
+					{
+						if (!sessionMap[row.session_id])
+							continue;
+
+						const user = {...row};
+						if (user.end === 0)
+						{
+							user.end = sessionMap[user.session_id].closed_on;
+						}
+						sessionMap[user.session_id].users.push(user);
+						delete user.session_id;
+					}
+
+					resolve(data);
+				});
+			});
 		});
 	});
 
@@ -227,32 +233,35 @@ const getAllLogs = async function()
 		const data = [];
 		const sessionMap = {};
 
-		db.all('SELECT * FROM sessions ORDER BY created_on DESC', (err, rows) => {
-	
-			if (err)
-				reject([]);
+		db.serialize(() =>
+		{
+			db.all('SELECT * FROM sessions ORDER BY created_on DESC', (err, rows) => {
 
-			for (let row of rows)
-			{
-				const session = {...row};
-				session.users = [];
-				data.push(session);
-				sessionMap[session.session_id] = session;
-			}
-		});
-	
-		db.all('SELECT * FROM users ORDER BY start ASC', (err, rows) => {
-			if (err)
-				reject([]);
+				if (err)
+					reject([]);
 
-			for (let row of rows)
-			{
-				const user = {...row};
-				sessionMap[user.session_id].users.push(user);
-				delete user.session_id;
-			}
-	
-			resolve(data);
+				for (let row of rows)
+				{
+					const session = {...row};
+					session.users = [];
+					data.push(session);
+					sessionMap[session.session_id] = session;
+				}
+
+				db.all('SELECT * FROM users ORDER BY start ASC', (err, rows) => {
+					if (err)
+						reject([]);
+
+					for (let row of rows)
+					{
+						const user = {...row};
+						sessionMap[user.session_id].users.push(user);
+						delete user.session_id;
+					}
+
+					resolve(data);
+				});
+			});
 		});
 	});
 

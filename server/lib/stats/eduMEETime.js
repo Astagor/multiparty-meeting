@@ -180,6 +180,7 @@ const getAllClosedMeetings = async function()
 			{
 				const session = {...row};
 				session.users = [];
+				session.duration = session.closed_on - session.created_on;
 				data.push(session);
 				sessionMap[session.session_id] = session;
 			}
@@ -198,9 +199,37 @@ const getAllClosedMeetings = async function()
 					{
 						user.end = sessionMap[user.session_id].closed_on;
 					}
-					sessionMap[user.session_id].users.push(user);
-					delete user.session_id;
+
+					let existingUser = sessionMap[user.session_id].users.find((ele) => ele.auth_id === user.auth_id);
+					if (!existingUser)
+					{
+						existingUser = { ...user };
+						existingUser.times = [];
+						delete existingUser.start;
+						delete existingUser.end;
+						delete existingUser.session_id;
+
+						sessionMap[user.session_id].users.push(existingUser);
+					}
+
+					const time = { start : user.start, end : user.end }
+					existingUser.times.push(time);
 				}
+
+				Object.values(sessionMap).forEach((session) =>
+				{
+					session.users.forEach((user) =>
+					{
+						let duration = 0;
+						user.times.forEach((user) =>
+						{
+							duration = duration + user.end - user.start;
+						});
+
+						user.duration = duration;
+						user.duration_percentage = `${100 * Math.round(user.duration / session.duration)}%`;
+					});
+				});
 
 				resolve(data);
 			});

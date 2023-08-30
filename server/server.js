@@ -351,6 +351,9 @@ function setupOIDC(oidcIssuer)
 		{ client: oidcClient, params, passReqToCallback, usePKCE },
 		(tokenset, userinfo, done) =>
 		{
+			logger.error('ASTAGOR tokenset %o', tokenset);
+			logger.error('ASTAGOR userinfo %o', userinfo);
+
 			if (userinfo && tokenset)
 			{
 				// eslint-disable-next-line camelcase

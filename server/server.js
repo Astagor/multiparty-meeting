@@ -806,13 +806,13 @@ async function runWebSocketServer()
 					_userinfo
 				} = socket.handshake.session.passport.user;
 
-				peer.authId = id;
+				peer.authId = id ? id : _userinfo?.sub;
 				peer.displayName = displayName;
 				peer.picture = picture;
 				peer.email = email;
 				peer.authenticated = true;
 
-				logger.error('ASTAGOR _userinfo %o', _userinfo);
+				logger.error('ASTAGOR peer.authId %o', peer.authId);
 
 				if (typeof config.userMapping === 'function')
 				{

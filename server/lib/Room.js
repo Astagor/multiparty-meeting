@@ -715,7 +715,7 @@ class Room extends EventEmitter
 				}
 			}
 
-			eduMEETime.peerJoined(this._uuid, peer.email);
+			eduMEETime.peerJoined(this._uuid, peer.authId, peer.email);
 
 		})
 			.catch((error) =>
@@ -862,7 +862,7 @@ class Room extends EventEmitter
 			}
 		}
 
-		eduMEETime.peerLeft(this._uuid, peer.email);
+		eduMEETime.peerLeft(this._uuid, peer.authId);
 
 		// If this is the last Peer in the room and
 		// lobby is empty, close the room after a while.

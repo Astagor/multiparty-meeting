@@ -812,8 +812,6 @@ async function runWebSocketServer()
 				peer.email = email;
 				peer.authenticated = true;
 
-				logger.error('ASTAGOR peer.authId %o', peer.authId);
-
 				if (typeof config.userMapping === 'function')
 				{
 					await config.userMapping({ peer, room, roomId, userinfo: _userinfo });

@@ -20,6 +20,8 @@ class Peer extends EventEmitter
 
 		this._authId = null;
 
+		this._userName = null;
+
 		this._socket = socket;
 
 		this._closed = false;
@@ -127,6 +129,16 @@ class Peer extends EventEmitter
 	set authId(authId)
 	{
 		this._authId = authId;
+	}
+
+	get userName()
+	{
+		return this._userName;
+	}
+
+	set userName(userName)
+	{
+		this._userName = userName;
 	}
 
 	get socket()

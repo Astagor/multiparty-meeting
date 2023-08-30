@@ -31,7 +31,7 @@ module.exports.init = function()
 		logger.debug('CREATING TABLES');
 		
 		db.run('CREATE TABLE sessions (room_id TEXT, session_id TEXT, created_on INTEGER DEFAULT 0, closed_on INTEGER DEFAULT 0)');
-		db.run('CREATE TABLE users (session_id TEXT, user_id TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
+		db.run('CREATE TABLE users (session_id TEXT, auth_id TEXT, name TEXT, email TEXT, start INTEGER DEFAULT 0, end INTEGER DEFAULT 0)');
 	}
 	else
 	{
@@ -288,7 +288,7 @@ module.exports.roomClosed = function(sessionId)
 	db.run('UPDATE sessions SET closed_on = ? WHERE session_id = ? AND closed_on = 0', [now, sessionId]);
 };
 
-module.exports.peerJoined = function(sessionId, userId, email)
+module.exports.peerJoined = function(sessionId, authId, name, email)
 {
 	logger.debug('Peer joined');
 
@@ -298,15 +298,15 @@ module.exports.peerJoined = function(sessionId, userId, email)
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	if (!userId)
+	if (!authId)
 		return;
 
 	const now = Date.now();
 
-	db.run('INSERT INTO users (session_id, user_id, email, start) VALUES (?, ?, ?, ?)', [sessionId, userId, email, now]);
+	db.run('INSERT INTO users (session_id, auth_id, name, email, start) VALUES (?, ?, ?, ?, ?)', [sessionId, authId, name, email, now]);
 };
 
-module.exports.peerLeft = function(sessionId, userId)
+module.exports.peerLeft = function(sessionId, authId)
 {
 	logger.debug('Peer joined');
 
@@ -316,10 +316,10 @@ module.exports.peerLeft = function(sessionId, userId)
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	if (!userId)
+	if (!authId)
 		return;
 
 	const now = Date.now();
 
-	db.run('UPDATE users SET end = ? WHERE session_id = ? AND user_id = ? AND end = 0', [now, sessionId, userId]);
+	db.run('UPDATE users SET end = ? WHERE session_id = ? AND auth_id = ? AND end = 0', [now, sessionId, authId]);
 };

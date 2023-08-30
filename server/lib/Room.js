@@ -715,7 +715,7 @@ class Room extends EventEmitter
 				}
 			}
 
-			eduMEETime.peerJoined(this._uuid, peer.authId, peer.email);
+			eduMEETime.peerJoined(this._uuid, peer.authId, peer.userName, peer.email);
 
 		})
 			.catch((error) =>

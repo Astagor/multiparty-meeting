@@ -812,6 +812,7 @@ async function runWebSocketServer()
 				peer.email = email;
 				peer.authenticated = true;
 
+				logger.error('ASTAGOR email %o', email);
 				logger.error('ASTAGOR user %o', socket.handshake.session.passport.user);
 				logger.error('ASTAGOR _userinfo %o', socket.handshake.session.passport.user._userinfo);
 

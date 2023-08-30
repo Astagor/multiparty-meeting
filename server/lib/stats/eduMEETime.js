@@ -227,7 +227,7 @@ const getAllClosedMeetings = async function()
 						});
 
 						user.duration = duration;
-						user.duration_percentage = `${Math.round(100 * user.duration / session.duration)}%`;
+						user.duration_percentage = Math.round(100 * user.duration / session.duration);
 					});
 				});
 

@@ -57,9 +57,11 @@ module.exports.init = function()
 		}
 
 		res.set('Content-Type', 'application/json');
-		res.end(JSON.stringify(await getAllLogs(), null, 4));
+		// res.end(JSON.stringify(await getAllLogs(), null, 4));
+		res.end(JSON.stringify(await getAllClosedMeetings(), null, 4));
 	});
 
+	/*
 	app.get('/current', async (req, res) =>
 	{
 		logger.debug(`GET ${req.originalUrl}`);
@@ -74,7 +76,9 @@ module.exports.init = function()
 		res.set('Content-Type', 'application/json');
 		res.end(JSON.stringify(await getAllOpenMeetings(), null, 4));
 	});
+	*/
 
+	/*
 	app.get('/passed', async (req, res) =>
 	{
 		logger.debug(`GET ${req.originalUrl}`);
@@ -89,6 +93,8 @@ module.exports.init = function()
 		res.set('Content-Type', 'application/json');
 		res.end(JSON.stringify(await getAllClosedMeetings(), null, 4));
 	});
+
+	*/
 
 	const server = app.listen(config.edumeetime.port, config.edumeetime.listen, () =>
 	{

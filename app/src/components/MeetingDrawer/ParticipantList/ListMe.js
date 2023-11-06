@@ -10,6 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import PanIcon from '@material-ui/icons/PanTool';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
+import { showIframeSelect } from '../../../store/selectors';
 
 const styles = (theme) =>
 	({
@@ -53,11 +54,16 @@ const ListMe = (props) =>
 	const {
 		roomClient,
 		me,
+		iframeUrl,
 		settings,
 		classes
 	} = props;
 
 	const picture = me.picture || EmptyAvatar;
+
+	const isIframeShown = (iframeUrl !== '');
+
+	const configIframeUrl = config.iframeUrls[roomClient._roomId] ? config.iframeUrls[roomClient._roomId] : '';
 
 	return (
 		<div className={classes.root}>
@@ -93,6 +99,42 @@ const ListMe = (props) =>
 					<PanIcon />
 				</IconButton>
 			</Tooltip>
+			{configIframeUrl !== '' && isIframeShown &&
+			<Button
+				aria-label={intl.formatMessage({
+					id             : 'room.hideIframe',
+					defaultMessage : 'Hide whiteboard'
+				})}
+				className={classes.button}
+				variant='contained'
+				color='secondary'
+				disabled={room.toggleIframeInProgress}
+				onClick={() => roomClient.toggleIframe(iframeUrl)}
+			>
+				<FormattedMessage
+					id='room.hideIframe'
+					defaultMessage='Hide whiteboard'
+				/>
+			</Button>
+			}
+			{configIframeUrl !== '' && !isIframeShown &&
+			<Button
+				aria-label={intl.formatMessage({
+					id             : 'room.showIframe',
+					defaultMessage : 'Show whiteboard'
+				})}
+				className={classes.button}
+				variant='contained'
+				color='secondary'
+				disabled={room.toggleIframeInProgress}
+				onClick={() => roomClient.toggleIframe(iframeUrl)}
+			>
+				<FormattedMessage
+					id='room.showIframe'
+					defaultMessage='Show iFrame'
+				/>
+			</Button>
+			}
 		</div>
 	);
 };
@@ -101,13 +143,15 @@ ListMe.propTypes =
 {
 	roomClient : PropTypes.object.isRequired,
 	me         : appPropTypes.Me.isRequired,
+	iframeUrl  : PropTypes.string.isRequired,
 	settings   : PropTypes.object.isRequired,
 	classes    : PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-	me       : state.me,
-	settings : state.settings
+	me        : state.me,
+	iframeUrl : showIframeSelect(state),
+	settings  : state.settings
 });
 
 export default withRoomContext(connect(
@@ -119,6 +163,7 @@ export default withRoomContext(connect(
 		{
 			return (
 				prev.me === next.me &&
+				prev.room.iframeUrl === next.room.iframeUrl &&
 				prev.settings === next.settings
 			);
 		}

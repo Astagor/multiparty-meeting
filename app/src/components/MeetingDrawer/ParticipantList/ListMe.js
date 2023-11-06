@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import PanIcon from '@material-ui/icons/PanTool';
+import Button from '@material-ui/core/Button';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
 import { showIframeSelect } from '../../../store/selectors';
 import { config } from '../../../config';

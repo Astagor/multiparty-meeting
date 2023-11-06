@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { withRoomContext } from '../../../RoomContext';
 import { useIntl, FormattedMessage } from 'react-intl';
 import Button from '@material-ui/core/Button';
+import { showIframeSelect } from '../../../store/selectors';
+import { config } from '../../../config';
 
 const styles = (theme) =>
 	({
@@ -31,8 +33,13 @@ const ListModerator = (props) =>
 	const {
 		roomClient,
 		room,
+		iframeUrl,
 		classes
 	} = props;
+
+	const isIframeShown = (iframeUrl !== '');
+
+	const configIframeUrl = config.iframeUrls[roomClient._roomId] ? config.iframeUrls[roomClient._roomId] : '';
 
 	return (
 		<div className={classes.root}>
@@ -84,6 +91,42 @@ const ListModerator = (props) =>
 					defaultMessage='Stop all screen sharing'
 				/>
 			</Button>
+			{configIframeUrl !== '' && isIframeShown &&
+			<Button
+				aria-label={intl.formatMessage({
+					id             : 'room.hideIframe',
+					defaultMessage : 'Hide whiteboard'
+				})}
+				className={classes.button}
+				variant='contained'
+				color='secondary'
+				disabled={room.toggleIframeInProgress}
+				onClick={() => roomClient.toggleIframe(iframeUrl)}
+			>
+				<FormattedMessage
+					id='room.hideIframe'
+					defaultMessage='Hide whiteboard'
+				/>
+			</Button>
+			}
+			{configIframeUrl !== '' && !isIframeShown &&
+			<Button
+				aria-label={intl.formatMessage({
+					id             : 'room.showIframe',
+					defaultMessage : 'Show whiteboard'
+				})}
+				className={classes.button}
+				variant='contained'
+				color='secondary'
+				disabled={room.toggleIframeInProgress}
+				onClick={() => roomClient.toggleIframe(iframeUrl)}
+			>
+				<FormattedMessage
+					id='room.showIframe'
+					defaultMessage='Show iFrame'
+				/>
+			</Button>
+			}
 			<Button
 				aria-label={intl.formatMessage({
 					id             : 'room.closeMeeting',
@@ -108,11 +151,13 @@ ListModerator.propTypes =
 {
 	roomClient : PropTypes.any.isRequired,
 	room       : PropTypes.object.isRequired,
+	iframeUrl  : PropTypes.string.isRequired,
 	classes    : PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-	room : state.room
+	room      : state.room,
+	iframeUrl : showIframeSelect(state)
 });
 
 export default withRoomContext(connect(

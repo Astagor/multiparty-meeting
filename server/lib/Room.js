@@ -262,6 +262,8 @@ class Room extends EventEmitter
 
 		this._fileHistory = [];
 
+		this._iframeHistory = [];
+
 		this._lastN = [];
 
 		this._peers = {};
@@ -309,6 +311,8 @@ class Room extends EventEmitter
 		this._chatHistory = null;
 
 		this._fileHistory = null;
+
+		this._iframeHistory = null;
 
 		this._lobby.close();
 
@@ -923,6 +927,7 @@ class Room extends EventEmitter
 					chatHistory          : this._chatHistory,
 					fileHistory          : this._fileHistory,
 					lastNHistory         : this._lastN,
+					iframeHistory        : this._iframeHistory,
 					locked               : this._locked,
 					lobbyPeers           : lobbyPeers,
 					accessCode           : this._accessCode
@@ -1765,6 +1770,35 @@ class Room extends EventEmitter
 				// Spread to others
 				this._notification(peer.socket, 'moderator:stopVideo', null, true);
 
+				cb();
+
+				break;
+			}
+
+			case 'moderator:toggleIframe':
+			{
+				if (!this._hasPermission(peer, MODERATE_ROOM))
+					throw new Error('peer not authorized');
+
+				const { iframeUrl } = request.data;
+
+				if (iframeUrl === '')
+				{
+					this._iframeHistory = [];
+
+					// Spread to others and self
+					this._notification(peer.socket, 'closeIframe', null, true, true);
+				}
+				else
+				{
+					this._iframeHistory.push(iframeUrl);
+
+					// Spread to others and self
+					this._notification(peer.socket, 'showIframe', {
+						iframeUrl : iframeUrl
+					}, true, true);
+				}
+				// Return no error
 				cb();
 
 				break;

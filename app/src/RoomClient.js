@@ -2110,6 +2110,35 @@ export default class RoomClient
 			peerActions.setStopPeerScreenSharingInProgress(peerId, false));
 	}
 
+	async toggleIframe()
+	{
+		let iframeUrl = config.iframeUrls[this._roomId] ? config.iframeUrls[this._roomId] : '';
+
+		const currentUrl = store.getState().room.iframeUrl;
+
+		if (currentUrl !== '')
+		{
+			iframeUrl = '';
+		}
+
+		logger.debug('toggleIframe() [iframeUrl:"%s"]', iframeUrl);
+
+		store.dispatch(
+			roomActions.setToggleIframeInProgress(true));
+
+		try
+		{
+			await this.sendRequest('moderator:toggleIframe', { iframeUrl });
+		}
+		catch (error)
+		{
+			logger.error('toggleIframe() [error:"%o"]', error);
+		}
+
+		store.dispatch(
+			roomActions.setToggleIframeInProgress(false));
+	}
+
 	async muteAllPeers()
 	{
 		logger.debug('muteAllPeers()');
@@ -3194,6 +3223,24 @@ export default class RoomClient
 						break;
 					}
 
+					case 'showIframe':
+					{
+						const { iframeUrl } = notification.data;
+
+						store.dispatch(
+							roomActions.openIframe(iframeUrl));
+
+						break;
+					}
+
+					case 'closeIframe':
+					{
+						store.dispatch(
+							roomActions.closeIframe());
+
+						break;
+					}
+
 					case 'moderator:clearChat':
 					{
 						store.dispatch(chatActions.clearChat());
@@ -3917,6 +3964,7 @@ export default class RoomClient
 				chatHistory,
 				fileHistory,
 				lastNHistory,
+				iframeHistory,
 				locked,
 				lobbyPeers,
 				accessCode
@@ -3983,6 +4031,9 @@ export default class RoomClient
 
 			(fileHistory.length > 0) && store.dispatch(
 				fileActions.addFileHistory(fileHistory));
+
+			(iframeHistory.length > 0) && store.dispatch(
+				roomActions.openIframe(iframeHistory[0]));
 
 			locked ?
 				store.dispatch(roomActions.setRoomLocked()) :

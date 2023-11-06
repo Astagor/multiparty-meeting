@@ -10,7 +10,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import PanIcon from '@material-ui/icons/PanTool';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
 import { showIframeSelect } from '../../../store/selectors';
 import { config } from '../../../config';
@@ -19,11 +18,10 @@ const styles = (theme) =>
 	({
 		root :
 		{
-			padding     : theme.spacing(1),
-			display     : 'flex',
-			flexWrap    : 'wrap',
-			marginRight : -theme.spacing(1),
-			marginTop   : -theme.spacing(1)
+			display       : 'flex',
+			flexDirection : 'column',
+			width         : '100%',
+			overflowY     : 'auto'
 		},
 		me :
 		{

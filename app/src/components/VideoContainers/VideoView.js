@@ -10,6 +10,11 @@ import SignalCellular0BarIcon from '@material-ui/icons/SignalCellular0Bar';
 import SignalCellular1BarIcon from '@material-ui/icons/SignalCellular1Bar';
 import SignalCellular2BarIcon from '@material-ui/icons/SignalCellular2Bar';
 import SignalCellular3BarIcon from '@material-ui/icons/SignalCellular3Bar';
+import Iframe from 'react-iframe';
+import IconButton from '@material-ui/core/IconButton';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import ReplayIcon from '@material-ui/icons/Replay';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { AudioAnalyzer } from './AudioAnalyzer';
 
 const logger = new Logger('VideoView');
@@ -172,6 +177,27 @@ const styles = (theme) =>
 			{
 				backgroundColor : 'rgb(174, 255, 0, 0.25)'
 			}
+		},
+		iframeContainer :
+		{
+			display    : 'flex',
+			flexFlow   : 'column',
+			height     : '100%',
+			background : 'white'
+		},
+		iframeMenu :
+		{
+			background : 'white'
+		},
+		iframeMain :
+		{
+			flex     : 1,
+			overflow : 'auto',
+			border   : 0
+		},
+		iframeButtons :
+		{
+			padding : theme.spacing(1)
 		}
 	});
 
@@ -206,6 +232,8 @@ class VideoView extends React.PureComponent
 	{
 		const {
 			isMe,
+			isIframe, // ASTAGOR
+			iframeUrl, // ASTAGOR
 			isMirrored,
 			isScreen,
 			isExtraVideo,
@@ -305,6 +333,7 @@ class VideoView extends React.PureComponent
 
 		return (
 			<div className={classes.root}>
+				{ !isIframe &&
 				<div className={classes.info}>
 					<div className={classes.media}>
 						{(audioCodec || videoCodec) &&
@@ -448,7 +477,8 @@ class VideoView extends React.PureComponent
 						</div>
 					}
 				</div>
-
+				}
+				{!isIframe &&
 				<video
 					ref='videoElement'
 					className={classnames(classes.video, {
@@ -473,7 +503,92 @@ class VideoView extends React.PureComponent
 					muted
 					controls={false}
 				/>
+				}
+				{isIframe &&
+					<div className={classnames(classes.video, {
+						contain : videoContain
+					})}
+					>
+						<div className={classes.iframeContainer}>
+							<div className={classes.iframeMenu}>
+								<IconButton
+									className={classes.iframeButtons}
+									onClick={() =>
+									{
+										const elem = document.getElementById('iframe_iframe');
 
+										if (elem.requestFullscreen)
+										{
+											elem.requestFullscreen();
+										}
+										else if (elem.mozRequestFullScreen)
+										{ /* Firefox */
+											elem.mozRequestFullScreen();
+										}
+										else if (elem.webkitRequestFullscreen)
+										{ /* Chrome, Safari and Opera */
+											elem.webkitRequestFullscreen();
+										}
+										else if (elem.msRequestFullscreen)
+										{ /* IE/Edge */
+											elem.msRequestFullscreen();
+										}
+									}}
+								>
+									<FullscreenIcon />
+								</IconButton>
+								<IconButton
+									className={classes.iframeButtons}
+									onClick={() =>
+									{
+										const tmpUrl = new URL(iframeUrl);
+
+										const generatePdfUrl = `${tmpUrl.protocol}//${tmpUrl.host}/api${tmpUrl.pathname}/pdf`;
+
+										fetch(generatePdfUrl, {
+											credentials    : 'include',
+											method         : 'GET',
+											cache          : 'no-cache',
+											redirect       : 'follow',
+											referrerPolicy : 'no-referrer' })
+											.then((response) => response.json())
+											.then((json) =>
+											{
+												if (json.url)
+												{
+													const downloadPdfUrl = `${tmpUrl.protocol}//${tmpUrl.host}${json.url}`;
+
+													window.open(downloadPdfUrl);
+												}
+											})
+											.catch((error) =>
+											{
+												logger.error('Error requesting PDF generation', error);
+											});
+									}}
+								>
+									<PictureAsPdfIcon />
+								</IconButton>
+								<IconButton
+									className={classes.iframeButtons}
+									onClick={() =>
+									{
+										const elem = document.getElementById('iframe_iframe');
+
+										elem.src = iframeUrl;
+									}}
+								>
+									<ReplayIcon />
+								</IconButton>
+							</div>
+							<Iframe
+								url={iframeUrl}
+								id='iframe_iframe'
+								className={classes.iframeMain}
+							/>
+						</div>
+					</div>
+				}
 				{children}
 			</div>
 		);
@@ -481,6 +596,8 @@ class VideoView extends React.PureComponent
 
 	componentDidMount()
 	{
+		if (this.props.isIframe) return;
+
 		const { videoTrack, audioTrack, showAudioAnalyzer } = this.props;
 
 		this._setTracks(videoTrack);
@@ -499,6 +616,8 @@ class VideoView extends React.PureComponent
 
 	componentWillUnmount()
 	{
+		if (this.props.isIframe) return;
+
 		clearInterval(this._videoResolutionTimer);
 
 		const { videoElement } = this.refs;
@@ -519,6 +638,8 @@ class VideoView extends React.PureComponent
 
 	componentDidUpdate(prevProps)
 	{
+		if (this.props.isIframe) return;
+
 		if (prevProps !== this.props)
 		{
 			const { videoTrack, audioTrack, showAudioAnalyzer } = this.props;
@@ -636,6 +757,8 @@ VideoView.propTypes =
 	isMe                           : PropTypes.bool,
 	isMirrored                     : PropTypes.bool,
 	isScreen                       : PropTypes.bool,
+	isIframe                       : PropTypes.bool, // ASTAGOR
+	iframeUrl                      : PropTypes.string, // ASTAGOR
 	isExtraVideo   	               : PropTypes.bool,
 	showQuality                    : PropTypes.bool,
 	showAudioAnalyzer              : PropTypes.bool,

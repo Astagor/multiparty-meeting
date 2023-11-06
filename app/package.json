@@ -51,6 +51,7 @@
 		"react-cookie-consent": "^2.5.0",
 		"react-dom": "^16.10.2",
 		"react-flip-toolkit": "^7.0.9",
+		"react-iframe": "1.8.5",
 		"react-image-file-resizer": "^0.3.8",
 		"react-images-upload": "^1.2.0",
 		"react-intl": "^3.4.0",

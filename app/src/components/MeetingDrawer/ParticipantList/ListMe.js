@@ -72,7 +72,7 @@ const ListMe = (props) =>
 	const picture = me.picture || EmptyAvatar;
 
 	return (
-		<Paper className={classes.root}>
+		<div className={classes.root}>
 			<div className={classes.me}>
 				<img alt='My avatar' className={classes.avatar} src={picture} />
 				<div className={classes.peerInfo}>
@@ -141,7 +141,7 @@ const ListMe = (props) =>
 				/>
 			</Button>
 			}
-		</Paper>
+		</div>
 	);
 };
 

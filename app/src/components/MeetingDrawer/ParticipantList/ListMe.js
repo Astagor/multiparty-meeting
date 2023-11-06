@@ -11,6 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import PanIcon from '@material-ui/icons/PanTool';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
 import { showIframeSelect } from '../../../store/selectors';
+import { config } from '../../../config';
 
 const styles = (theme) =>
 	({
@@ -55,6 +56,7 @@ const ListMe = (props) =>
 		roomClient,
 		me,
 		iframeUrl,
+		toggleIframeInProgress,
 		settings,
 		classes
 	} = props;
@@ -103,17 +105,17 @@ const ListMe = (props) =>
 			<Button
 				aria-label={intl.formatMessage({
 					id             : 'room.hideIframe',
-					defaultMessage : 'Hide whiteboard'
+					defaultMessage : 'Hide external app'
 				})}
 				className={classes.button}
 				variant='contained'
 				color='secondary'
-				disabled={room.toggleIframeInProgress}
+				disabled={toggleIframeInProgress}
 				onClick={() => roomClient.toggleIframe(iframeUrl)}
 			>
 				<FormattedMessage
 					id='room.hideIframe'
-					defaultMessage='Hide whiteboard'
+					defaultMessage='Hide external app'
 				/>
 			</Button>
 			}
@@ -121,17 +123,17 @@ const ListMe = (props) =>
 			<Button
 				aria-label={intl.formatMessage({
 					id             : 'room.showIframe',
-					defaultMessage : 'Show whiteboard'
+					defaultMessage : 'Show external app'
 				})}
 				className={classes.button}
 				variant='contained'
 				color='secondary'
-				disabled={room.toggleIframeInProgress}
+				disabled={toggleIframeInProgress}
 				onClick={() => roomClient.toggleIframe(iframeUrl)}
 			>
 				<FormattedMessage
 					id='room.showIframe'
-					defaultMessage='Show iFrame'
+					defaultMessage='Show external app'
 				/>
 			</Button>
 			}
@@ -141,17 +143,19 @@ const ListMe = (props) =>
 
 ListMe.propTypes =
 {
-	roomClient : PropTypes.object.isRequired,
-	me         : appPropTypes.Me.isRequired,
-	iframeUrl  : PropTypes.string.isRequired,
-	settings   : PropTypes.object.isRequired,
-	classes    : PropTypes.object.isRequired
+	roomClient             : PropTypes.object.isRequired,
+	me                     : appPropTypes.Me.isRequired,
+	iframeUrl              : PropTypes.string,
+	toggleIframeInProgress : PropTypes.bool,
+	settings               : PropTypes.object.isRequired,
+	classes                : PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-	me        : state.me,
-	iframeUrl : showIframeSelect(state),
-	settings  : state.settings
+	me                     : state.me,
+	iframeUrl              : showIframeSelect(state),
+	toggleIframeInProgress : state.room.toggleIframeInProgress,
+	settings               : state.settings
 });
 
 export default withRoomContext(connect(
@@ -164,6 +168,7 @@ export default withRoomContext(connect(
 			return (
 				prev.me === next.me &&
 				prev.room.iframeUrl === next.room.iframeUrl &&
+				prev.room.toggleIframeInProgress === next.room.toggleIframeInProgress &&
 				prev.settings === next.settings
 			);
 		}

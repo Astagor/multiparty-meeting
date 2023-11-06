@@ -10,6 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import PanIcon from '@material-ui/icons/PanTool';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
 import { showIframeSelect } from '../../../store/selectors';
 import { config } from '../../../config';
@@ -17,6 +18,14 @@ import { config } from '../../../config';
 const styles = (theme) =>
 	({
 		root :
+		{
+			padding     : theme.spacing(1),
+			display     : 'flex',
+			flexWrap    : 'wrap',
+			marginRight : -theme.spacing(1),
+			marginTop   : -theme.spacing(1)
+		},
+		me :
 		{
 			width    : '100%',
 			overflow : 'hidden',
@@ -65,76 +74,76 @@ const ListMe = (props) =>
 	const picture = me.picture || EmptyAvatar;
 
 	return (
-		<div className={classes.root}>
-			<img alt='My avatar' className={classes.avatar} src={picture} />
-
-			<div className={classes.peerInfo}>
-				{settings.displayName}
-			</div>
-			<Tooltip
-				title={intl.formatMessage({
-					id             : 'tooltip.raisedHand',
-					defaultMessage : 'Raise hand'
-				})}
-				placement='bottom'
-			>
-				<IconButton
-					aria-label={intl.formatMessage({
+		<Paper className={classes.root}>
+			<div className={classes.me}>
+				<img alt='My avatar' className={classes.avatar} src={picture} />
+				<div className={classes.peerInfo}>
+					{settings.displayName}
+				</div>
+				<Tooltip
+					title={intl.formatMessage({
 						id             : 'tooltip.raisedHand',
 						defaultMessage : 'Raise hand'
 					})}
-					className={
-						classnames(me.raisedHand ? classes.green : null, classes.buttons)
-					}
-					disabled={me.raisedHandInProgress}
-					color='primary'
-					onClick={(e) =>
-					{
-						e.stopPropagation();
-
-						roomClient.setRaisedHand(!me.raisedHand);
-					}}
+					placement='bottom'
 				>
-					<PanIcon />
-				</IconButton>
-			</Tooltip>
-			{iframeUrl &&
-			<Button
-				aria-label={intl.formatMessage({
-					id             : 'room.hideIframe',
-					defaultMessage : 'Hide external app'
-				})}
-				className={classes.button}
-				variant='contained'
-				color='secondary'
-				disabled={toggleIframeInProgress}
-				onClick={() => roomClient.toggleIframe(null)}
-			>
-				<FormattedMessage
-					id='room.hideIframe'
-					defaultMessage='Hide external app'
-				/>
-			</Button>
-			}
-			{!iframeUrl &&
-			<Button
-				aria-label={intl.formatMessage({
-					id             : 'room.showIframe',
-					defaultMessage : 'Show external app'
-				})}
-				className={classes.button}
-				variant='contained'
-				color='secondary'
-				disabled={toggleIframeInProgress}
-				onClick={() => roomClient.toggleIframe(iframeUrl)}
-			>
-				<FormattedMessage
-					id='room.showIframe'
-					defaultMessage='Show external app'
-				/>
-			</Button>
-			}
-		</div>
+					<IconButton
+						aria-label={intl.formatMessage({
+							id             : 'tooltip.raisedHand',
+							defaultMessage : 'Raise hand'
+						})}
+						className={
+							classnames(me.raisedHand ? classes.green : null, classes.buttons)
+						}
+						disabled={me.raisedHandInProgress}
+						color='primary'
+						onClick={(e) =>
+						{
+							e.stopPropagation();
+							roomClient.setRaisedHand(!me.raisedHand);
+						}}
+					>
+						<PanIcon />
+					</IconButton>
+				</Tooltip>
+				{iframeUrl &&
+				<Button
+					aria-label={intl.formatMessage({
+						id             : 'room.hideIframe',
+						defaultMessage : 'Hide external app'
+					})}
+					className={classes.button}
+					variant='contained'
+					color='secondary'
+					disabled={toggleIframeInProgress}
+					onClick={() => roomClient.toggleIframe(null)}
+				>
+					<FormattedMessage
+						id='room.hideIframe'
+						defaultMessage='Hide external app'
+					/>
+				</Button>
+				}
+				{!iframeUrl &&
+				<Button
+					aria-label={intl.formatMessage({
+						id             : 'room.showIframe',
+						defaultMessage : 'Show external app'
+					})}
+					className={classes.button}
+					variant='contained'
+					color='secondary'
+					disabled={toggleIframeInProgress}
+					onClick={() => roomClient.toggleIframe(iframeUrl)}
+				>
+					<FormattedMessage
+						id='room.showIframe'
+						defaultMessage='Show external app'
+					/>
+				</Button>
+				}
+			</div>
+		</Paper>
 	);
 };
 

@@ -106,43 +106,43 @@ const ListMe = (props) =>
 						<PanIcon />
 					</IconButton>
 				</Tooltip>
-				{iframeUrl &&
-				<Button
-					aria-label={intl.formatMessage({
-						id             : 'room.hideIframe',
-						defaultMessage : 'Hide external app'
-					})}
-					className={classes.button}
-					variant='contained'
-					color='secondary'
-					disabled={toggleIframeInProgress}
-					onClick={() => roomClient.toggleIframe(null)}
-				>
-					<FormattedMessage
-						id='room.hideIframe'
-						defaultMessage='Hide external app'
-					/>
-				</Button>
-				}
-				{!iframeUrl &&
-				<Button
-					aria-label={intl.formatMessage({
-						id             : 'room.showIframe',
-						defaultMessage : 'Show external app'
-					})}
-					className={classes.button}
-					variant='contained'
-					color='secondary'
-					disabled={toggleIframeInProgress}
-					onClick={() => roomClient.toggleIframe(iframeUrl)}
-				>
-					<FormattedMessage
-						id='room.showIframe'
-						defaultMessage='Show external app'
-					/>
-				</Button>
-				}
 			</div>
+			{iframeUrl &&
+			<Button
+				aria-label={intl.formatMessage({
+					id             : 'room.hideIframe',
+					defaultMessage : 'Hide external app'
+				})}
+				className={classes.button}
+				variant='contained'
+				color='secondary'
+				disabled={toggleIframeInProgress}
+				onClick={() => roomClient.toggleIframe(null)}
+			>
+				<FormattedMessage
+					id='room.hideIframe'
+					defaultMessage='Hide external app'
+				/>
+			</Button>
+			}
+			{!iframeUrl &&
+			<Button
+				aria-label={intl.formatMessage({
+					id             : 'room.showIframe',
+					defaultMessage : 'Show external app'
+				})}
+				className={classes.button}
+				variant='contained'
+				color='secondary'
+				disabled={toggleIframeInProgress}
+				onClick={() => roomClient.toggleIframe(iframeUrl)}
+			>
+				<FormattedMessage
+					id='room.showIframe'
+					defaultMessage='Show external app'
+				/>
+			</Button>
+			}
 		</Paper>
 	);
 };

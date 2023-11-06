@@ -1785,20 +1785,6 @@ class Room extends EventEmitter
 				if (iframeUrl && this._iframeHistory)
 					throw new Error('iframe already opened');
 
-				let url;
-
-				try
-				{
-					url = new URL(urlString);
-				}
-				catch(error)
-				{
-					throw new Error('not a valid url');
-				} 
-
-				if (url.protocol !== 'https:')
-					throw new Error('only https allowed for external apps');
-
 				if (!iframeUrl)
 				{
 					this._iframeHistory = null;
@@ -1808,6 +1794,21 @@ class Room extends EventEmitter
 				}
 				else
 				{
+
+					let url;
+	
+					try
+					{
+						url = new URL(iframeUrl);
+					}
+					catch(error)
+					{
+						throw new Error('not a valid url');
+					} 
+	
+					if (url.protocol !== 'https:')
+						throw new Error('only https allowed for external apps');
+
 					this._iframeHistory = iframeUrl;
 
 					// Spread to others and self

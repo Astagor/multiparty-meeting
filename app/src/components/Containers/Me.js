@@ -181,8 +181,6 @@ const Me = (props) =>
 		localRecordingState
 	} = props;
 
-	const isIframeShown = (iframeUrl !== '');
-
 	const width = style.width;
 
 	const height = style.height;
@@ -1026,15 +1024,14 @@ const Me = (props) =>
 					</div>
 				</div>
 			}
-			{isIframeShown &&
+			{iframeUrl &&
 			<div className={classnames(classes.root, 'iframe')} style={spacingStyle}>
 				<div className={classes.viewContainer} style={style}>
 					<VideoView
 						isMe
 						isIframe
-						iframeUrl={`${iframeUrl }&guest_nickname=
-							${ encodeURI(settings.displayName)}`}
-						videoVisible={screenVisible}
+						iframeUrl={`${iframeUrl }`}
+						videoVisible
 					/>
 				</div>
 			</div>

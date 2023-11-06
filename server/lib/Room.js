@@ -262,7 +262,7 @@ class Room extends EventEmitter
 
 		this._fileHistory = [];
 
-		this._iframeHistory = [];
+		this._iframeHistory = null;
 
 		this._lastN = [];
 
@@ -1775,28 +1775,44 @@ class Room extends EventEmitter
 				break;
 			}
 
-			case 'moderator:toggleIframe':
+			case 'toggleIframe':
 			{
-				if (!this._hasPermission(peer, MODERATE_ROOM))
+				if (!this._hasPermission(peer, SHARE_SCREEN))
 					throw new Error('peer not authorized');
 
 				const { iframeUrl } = request.data;
 
-				if (iframeUrl === '')
+				if (iframeUrl && this._iframeHistory)
+					throw new Error('iframe already opened');
+
+				let url;
+
+				try
 				{
-					this._iframeHistory = [];
+					url = new URL(urlString);
+				}
+				catch(error)
+				{
+					throw new Error('not a valid url');
+				} 
+
+				if (url.protocol !== 'https:')
+					throw new Error('only https allowed for external apps');
+
+				if (!iframeUrl)
+				{
+					this._iframeHistory = null;
 
 					// Spread to others and self
 					this._notification(peer.socket, 'closeIframe', null, true, true);
 				}
 				else
 				{
-					this._iframeHistory.push(iframeUrl);
+					this._iframeHistory = iframeUrl;
 
 					// Spread to others and self
-					this._notification(peer.socket, 'showIframe', {
-						iframeUrl : iframeUrl
-					}, true, true);
+					this._notification(peer.socket, 'showIframe',
+						{ iframeUrl }, true, true);
 				}
 				// Return no error
 				cb();

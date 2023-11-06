@@ -2110,25 +2110,14 @@ export default class RoomClient
 			peerActions.setStopPeerScreenSharingInProgress(peerId, false));
 	}
 
-	async toggleIframe()
+	async toggleIframe(iframeUrl)
 	{
-		let iframeUrl = config.iframeUrls[this._roomId] ? config.iframeUrls[this._roomId] : '';
-
-		const currentUrl = store.getState().room.iframeUrl;
-
-		if (currentUrl !== '')
-		{
-			iframeUrl = '';
-		}
-
-		logger.debug('toggleIframe() [iframeUrl:"%s"]', iframeUrl);
-
 		store.dispatch(
 			roomActions.setToggleIframeInProgress(true));
 
 		try
 		{
-			await this.sendRequest('moderator:toggleIframe', { iframeUrl });
+			await this.sendRequest('toggleIframe', { iframeUrl });
 		}
 		catch (error)
 		{
@@ -4032,8 +4021,8 @@ export default class RoomClient
 			(fileHistory.length > 0) && store.dispatch(
 				fileActions.addFileHistory(fileHistory));
 
-			(iframeHistory.length > 0) && store.dispatch(
-				roomActions.openIframe(iframeHistory[0]));
+			(iframeHistory) && store.dispatch(
+				roomActions.openIframe(iframeHistory));
 
 			locked ?
 				store.dispatch(roomActions.setRoomLocked()) :

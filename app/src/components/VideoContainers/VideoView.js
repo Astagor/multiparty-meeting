@@ -14,7 +14,6 @@ import Iframe from 'react-iframe';
 import IconButton from '@material-ui/core/IconButton';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import ReplayIcon from '@material-ui/icons/Replay';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { AudioAnalyzer } from './AudioAnalyzer';
 
 const logger = new Logger('VideoView');
@@ -232,8 +231,8 @@ class VideoView extends React.PureComponent
 	{
 		const {
 			isMe,
-			isIframe, // ASTAGOR
-			iframeUrl, // ASTAGOR
+			isIframe,
+			iframeUrl,
 			isMirrored,
 			isScreen,
 			isExtraVideo,
@@ -541,38 +540,6 @@ class VideoView extends React.PureComponent
 									className={classes.iframeButtons}
 									onClick={() =>
 									{
-										const tmpUrl = new URL(iframeUrl);
-
-										const generatePdfUrl = `${tmpUrl.protocol}//${tmpUrl.host}/api${tmpUrl.pathname}/pdf`;
-
-										fetch(generatePdfUrl, {
-											credentials    : 'include',
-											method         : 'GET',
-											cache          : 'no-cache',
-											redirect       : 'follow',
-											referrerPolicy : 'no-referrer' })
-											.then((response) => response.json())
-											.then((json) =>
-											{
-												if (json.url)
-												{
-													const downloadPdfUrl = `${tmpUrl.protocol}//${tmpUrl.host}${json.url}`;
-
-													window.open(downloadPdfUrl);
-												}
-											})
-											.catch((error) =>
-											{
-												logger.error('Error requesting PDF generation', error);
-											});
-									}}
-								>
-									<PictureAsPdfIcon />
-								</IconButton>
-								<IconButton
-									className={classes.iframeButtons}
-									onClick={() =>
-									{
 										const elem = document.getElementById('iframe_iframe');
 
 										elem.src = iframeUrl;
@@ -757,8 +724,8 @@ VideoView.propTypes =
 	isMe                           : PropTypes.bool,
 	isMirrored                     : PropTypes.bool,
 	isScreen                       : PropTypes.bool,
-	isIframe                       : PropTypes.bool, // ASTAGOR
-	iframeUrl                      : PropTypes.string, // ASTAGOR
+	isIframe                       : PropTypes.bool,
+	iframeUrl                      : PropTypes.string,
 	isExtraVideo   	               : PropTypes.bool,
 	showQuality                    : PropTypes.bool,
 	showAudioAnalyzer              : PropTypes.bool,

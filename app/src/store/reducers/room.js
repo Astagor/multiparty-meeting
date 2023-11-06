@@ -26,7 +26,7 @@ const initialState =
 	settingsOpen                  : false,
 	extraVideoOpen                : false,
 	hideSelfView                  : false,
-	iframeUrl                     : '',
+	iframeUrl                     : null,
 	toggleIframeInProgress        : false,
 	rolesManagerOpen              : false,
 	helpOpen                      : false,
@@ -320,7 +320,7 @@ const room = (state = initialState, action) =>
 
 		case 'CLOSE_IFRAME':
 		{
-			const iframeUrl = '';
+			const iframeUrl = null;
 
 			return { ...state, iframeUrl };
 		}

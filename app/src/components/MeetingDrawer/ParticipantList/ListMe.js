@@ -63,10 +63,6 @@ const ListMe = (props) =>
 
 	const picture = me.picture || EmptyAvatar;
 
-	const isIframeShown = (iframeUrl !== '');
-
-	const configIframeUrl = config.iframeUrls[roomClient._roomId] ? config.iframeUrls[roomClient._roomId] : '';
-
 	return (
 		<div className={classes.root}>
 			<img alt='My avatar' className={classes.avatar} src={picture} />
@@ -101,7 +97,7 @@ const ListMe = (props) =>
 					<PanIcon />
 				</IconButton>
 			</Tooltip>
-			{configIframeUrl !== '' && isIframeShown &&
+			{iframeUrl &&
 			<Button
 				aria-label={intl.formatMessage({
 					id             : 'room.hideIframe',
@@ -111,7 +107,7 @@ const ListMe = (props) =>
 				variant='contained'
 				color='secondary'
 				disabled={toggleIframeInProgress}
-				onClick={() => roomClient.toggleIframe(iframeUrl)}
+				onClick={() => roomClient.toggleIframe(null)}
 			>
 				<FormattedMessage
 					id='room.hideIframe'
@@ -119,7 +115,7 @@ const ListMe = (props) =>
 				/>
 			</Button>
 			}
-			{configIframeUrl !== '' && !isIframeShown &&
+			{!iframeUrl &&
 			<Button
 				aria-label={intl.formatMessage({
 					id             : 'room.showIframe',

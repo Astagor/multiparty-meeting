@@ -5,7 +5,7 @@ import { withRoomContext } from '../../../RoomContext';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import * as appPropTypes from '../../appPropTypes';
-import { useIntl } from 'react-intl';
+import { useIntl, FormattedMessage } from 'react-intl';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import PanIcon from '@material-ui/icons/PanTool';

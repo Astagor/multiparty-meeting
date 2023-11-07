@@ -192,7 +192,11 @@ const ListMe = (props) =>
 				variant='contained'
 				color='secondary'
 				disabled={toggleIframeInProgress || !isValidUrl}
-				onClick={() => roomClient.toggleIframe(currentUrl)}
+				onClick={() =>
+				{
+					roomClient.toggleIframe(currentUrl);
+					setCurrentUrl('');
+				}}
 			>
 				<FormattedMessage
 					id='room.showIframe'

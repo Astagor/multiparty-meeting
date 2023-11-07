@@ -89,7 +89,7 @@ const ListMe = (props) =>
 		} 
 
 		if (url.protocol !== 'https:')
-			retur false;
+			return false;
 
 		return true;
 	};

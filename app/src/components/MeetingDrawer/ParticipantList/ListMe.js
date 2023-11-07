@@ -18,6 +18,16 @@ import Logger from '../../../Logger';
 
 const logger = new Logger('ListMe');
 
+const urlPattern = new RegExp(
+	'^(https?:\\/\\/)?' +
+	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+	'((\\d{1,3}\\.){3}\\d{1,3}))' +
+	'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+	'(\\?[;&a-z\\d%_.~+=-]*)?' +
+	'(\\#[-a-z\\d_]*)?$',
+	'i'
+);
+
 const styles = (theme) =>
 	({
 		root :
@@ -85,17 +95,7 @@ const ListMe = (props) =>
 		if (currentUrl === '')
 			return false;
 
-		const pattern = new RegExp(
-			'^(https?:\\/\\/)?' +
-			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-			'((\\d{1,3}\\.){3}\\d{1,3}))' +
-			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-			'(\\?[;&a-z\\d%_.~+=-]*)?' +
-			'(\\#[-a-z\\d_]*)?$',
-			'i'
-		);
-
-		if (!pattern.test(currentUrl))
+		if (!urlPattern.test(currentUrl))
 			return false;
 
 		if (!currentUrl.toLowerCase().startsWith('https://'))

@@ -15,9 +15,6 @@ import TextField from '@material-ui/core/TextField';
 import { showIframeSelect, makePermissionSelector } from '../../../store/selectors';
 import { permissions } from '../../../permissions';
 import { config } from '../../../config';
-import Logger from '../../../Logger';
-
-const logger = new Logger('ListMe');
 
 const urlPattern = new RegExp(
 	'^(https?:\\/\\/)?' +
@@ -87,13 +84,8 @@ const ListMe = (props) =>
 
 	const [ currentUrl, setCurrentUrl ] = useState('');
 
-	logger.error('iframeUrl "%s"', iframeUrl);
-	logger.error('currentUrl "%s"', currentUrl);
-
 	const validateUrl = () =>
 	{
-		logger.error('isValidUrl - currentUrl "%s"', currentUrl);
-
 		if (currentUrl === '')
 			return false;
 
@@ -107,8 +99,6 @@ const ListMe = (props) =>
 	};
 
 	const isValidUrl = validateUrl();
-
-	logger.error('isValidUrl  %s', isValidUrl);
 
 	const picture = me.picture || EmptyAvatar;
 
@@ -159,14 +149,7 @@ const ListMe = (props) =>
 					variant='outlined'
 					margin='normal'
 					disabled={iframeUrl}
-					onChange={(event) =>
-					{
-						const { value } = event.target;
-
-						logger.error('onChange - value "%s"', currentUrl);
-
-						setCurrentUrl(value.trim());
-					}}
+					onChange={(event) => setCurrentUrl(event.target.value.trim())}
 					fullWidth
 				/>
 				{iframeUrl &&

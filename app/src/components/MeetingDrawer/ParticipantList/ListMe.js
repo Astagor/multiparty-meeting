@@ -12,6 +12,7 @@ import PanIcon from '@material-ui/icons/PanTool';
 import Button from '@material-ui/core/Button';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
 import { showIframeSelect } from '../../../store/selectors';
+import TextField from '@material-ui/core/TextField';
 import { config } from '../../../config';
 
 const styles = (theme) =>
@@ -58,8 +59,6 @@ const styles = (theme) =>
 
 const ListMe = (props) =>
 {
-	const intl = useIntl();
-
 	const {
 		roomClient,
 		me,
@@ -69,6 +68,34 @@ const ListMe = (props) =>
 		classes
 	} = props;
 
+	const intl = useIntl();
+
+	const [ currentUrl, setCurrentUrl] = useState('');
+
+	const isValidUrl = () =>
+	{
+		if (currentUrl === '')
+			return false;
+
+		let url;
+
+		try
+		{
+			url = new URL(currentUrl);
+		}
+		catch(error)
+		{
+			return false;
+		} 
+
+		if (url.protocol !== 'https:')
+			retur false;
+
+		return true;
+	};
+
+	const inputRef = useRef(null);
+	
 	const picture = me.picture || EmptyAvatar;
 
 	return (
@@ -105,6 +132,24 @@ const ListMe = (props) =>
 					</IconButton>
 				</Tooltip>
 			</div>
+			<TextField
+				id='displayname'
+				label={intl.formatMessage({
+					id             : 'label.iframeAppUrl',
+					defaultMessage : 'External app URL, https only'
+				})}
+				value={iframeUrl ?? ''}
+				variant='outlined'
+				margin='normal'
+				disabled={iframeUrl}
+				onChange={(event) =>
+				{
+					const { value } = event.target;
+
+					setCurrentUrl(value);
+				}}
+				fullWidth
+			/>
 			{iframeUrl &&
 			<Button
 				aria-label={intl.formatMessage({
@@ -132,8 +177,8 @@ const ListMe = (props) =>
 				className={classes.button}
 				variant='contained'
 				color='secondary'
-				disabled={toggleIframeInProgress}
-				onClick={() => roomClient.toggleIframe(iframeUrl)}
+				disabled={toggleIframeInProgress || !isValidUrl}
+				onClick={() => roomClient.toggleIframe(currentUrl)}
 			>
 				<FormattedMessage
 					id='room.showIframe'

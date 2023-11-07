@@ -1777,13 +1777,16 @@ class Room extends EventEmitter
 
 			case 'toggleIframe':
 			{
+				if (!peer.joined)
+					throw new Error('Peer not yet joined');
+
 				if (!this._hasPermission(peer, SHARE_SCREEN))
-					throw new Error('peer not authorized');
+					throw new Error('Peer not authorized to toggle external app');
 
 				const { iframeUrl } = request.data;
 
 				if (iframeUrl && this._iframeHistory)
-					throw new Error('iframe already opened');
+					throw new Error('External app already opened');
 
 				if (!iframeUrl)
 				{
@@ -1803,11 +1806,11 @@ class Room extends EventEmitter
 					}
 					catch(error)
 					{
-						throw new Error('not a valid url');
+						throw new Error('Not a valid url for external app');
 					} 
 	
 					if (url.protocol !== 'https:')
-						throw new Error('only https allowed for external apps');
+						throw new Error('Only https allowed for external apps');
 
 					this._iframeHistory = iframeUrl;
 

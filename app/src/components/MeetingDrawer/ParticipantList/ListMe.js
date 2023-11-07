@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { withRoomContext } from '../../../RoomContext';
@@ -70,7 +70,7 @@ const ListMe = (props) =>
 
 	const intl = useIntl();
 
-	const [ currentUrl, setCurrentUrl] = useState('');
+	const [ currentUrl, setCurrentUrl ] = useState('');
 
 	const isValidUrl = () =>
 	{
@@ -83,10 +83,10 @@ const ListMe = (props) =>
 		{
 			url = new URL(currentUrl);
 		}
-		catch(error)
+		catch (error)
 		{
 			return false;
-		} 
+		}
 
 		if (url.protocol !== 'https:')
 			return false;
@@ -94,8 +94,6 @@ const ListMe = (props) =>
 		return true;
 	};
 
-	const inputRef = useRef(null);
-	
 	const picture = me.picture || EmptyAvatar;
 
 	return (

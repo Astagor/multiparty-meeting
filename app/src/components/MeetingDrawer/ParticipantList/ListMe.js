@@ -78,7 +78,7 @@ const ListMe = (props) =>
 	logger.error('iframeUrl "%s"', iframeUrl);
 	logger.error('currentUrl "%s"', currentUrl);
 
-	const isValidUrl = () =>
+	const validateUrl = () =>
 	{
 		logger.error('isValidUrl - currentUrl "%s"', currentUrl);
 
@@ -101,6 +101,8 @@ const ListMe = (props) =>
 
 		return true;
 	};
+
+	const isUrlValid = validateUrl();
 
 	logger.error('isValidUrl  %s', isValidUrl);
 
@@ -146,7 +148,7 @@ const ListMe = (props) =>
 					id             : 'label.iframeAppUrl',
 					defaultMessage : 'External app URL, https only'
 				})}
-				// value={iframeUrl ?? null}
+				value={iframeUrl ?? undefined}
 				variant='outlined'
 				margin='normal'
 				disabled={iframeUrl}

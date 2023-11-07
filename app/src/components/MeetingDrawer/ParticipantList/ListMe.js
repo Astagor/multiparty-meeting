@@ -102,7 +102,7 @@ const ListMe = (props) =>
 		return true;
 	};
 
-	const isUrlValid = validateUrl();
+	const isValidUrl = validateUrl();
 
 	logger.error('isValidUrl  %s', isValidUrl);
 

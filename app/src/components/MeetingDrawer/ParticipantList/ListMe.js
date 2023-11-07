@@ -85,18 +85,20 @@ const ListMe = (props) =>
 		if (currentUrl === '')
 			return false;
 
-		let url;
+		const pattern = new RegExp(
+			'^(https?:\\/\\/)?' +
+			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+			'((\\d{1,3}\\.){3}\\d{1,3}))' +
+			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+			'(\\?[;&a-z\\d%_.~+=-]*)?' +
+			'(\\#[-a-z\\d_]*)?$',
+			'i'
+		);
 
-		try
-		{
-			url = new URL(currentUrl);
-		}
-		catch (error)
-		{
+		if (!pattern.test(currentUrl))
 			return false;
-		}
 
-		if (url.protocol !== 'https:')
+		if (!currentUrl.toLowerCase().startsWith('https://'))
 			return false;
 
 		return true;
@@ -148,7 +150,7 @@ const ListMe = (props) =>
 					id             : 'label.iframeAppUrl',
 					defaultMessage : 'External app URL, https only'
 				})}
-				value={iframeUrl ?? undefined}
+				value={iframeUrl ?? currentUrl}
 				variant='outlined'
 				margin='normal'
 				disabled={iframeUrl}
@@ -158,7 +160,7 @@ const ListMe = (props) =>
 
 					logger.error('onChange - value "%s"', currentUrl);
 
-					setCurrentUrl(value);
+					setCurrentUrl(value.trim());
 				}}
 				fullWidth
 			/>

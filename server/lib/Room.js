@@ -1798,18 +1798,20 @@ class Room extends EventEmitter
 				else
 				{
 
-					let url;
-	
-					try
-					{
-						url = new URL(iframeUrl);
-					}
-					catch(error)
-					{
+					const pattern = new RegExp(
+						'^(https?:\\/\\/)?' +
+						'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+						'((\\d{1,3}\\.){3}\\d{1,3}))' +
+						'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+						'(\\?[;&a-z\\d%_.~+=-]*)?' +
+						'(\\#[-a-z\\d_]*)?$',
+						'i'
+					);
+
+					if (!pattern.test(iframeUrl))
 						throw new Error('Not a valid url for external app');
-					} 
 	
-					if (url.protocol !== 'https:')
+					if (!iframeUrl.toLowerCase().startsWith('https://'))
 						throw new Error('Only https allowed for external apps');
 
 					this._iframeHistory = iframeUrl;

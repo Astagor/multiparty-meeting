@@ -146,7 +146,7 @@ const ListMe = (props) =>
 					id             : 'label.iframeAppUrl',
 					defaultMessage : 'External app URL, https only'
 				})}
-				value={iframeUrl ?? ''}
+				// value={iframeUrl ?? null}
 				variant='outlined'
 				margin='normal'
 				disabled={iframeUrl}

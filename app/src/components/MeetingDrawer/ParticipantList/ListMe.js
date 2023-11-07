@@ -13,6 +13,8 @@ import Button from '@material-ui/core/Button';
 import EmptyAvatar from '../../../images/avatar-empty.jpeg';
 import { showIframeSelect } from '../../../store/selectors';
 import TextField from '@material-ui/core/TextField';
+import { makePermissionSelector } from '../../../store/selectors';
+import { permissions } from '../../../permissions';
 import { config } from '../../../config';
 import Logger from '../../../Logger';
 

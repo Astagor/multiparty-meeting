@@ -77,6 +77,7 @@ const ListMe = (props) =>
 		me,
 		iframeUrl,
 		toggleIframeInProgress,
+		hasScreenPermission,
 		settings,
 		classes
 	} = props;
@@ -144,65 +145,70 @@ const ListMe = (props) =>
 					</IconButton>
 				</Tooltip>
 			</div>
-			<TextField
-				id='displayname'
-				label={intl.formatMessage({
-					id             : 'label.iframeAppUrl',
-					defaultMessage : 'External app URL, https only'
-				})}
-				value={iframeUrl ?? currentUrl}
-				variant='outlined'
-				margin='normal'
-				disabled={iframeUrl}
-				onChange={(event) =>
-				{
-					const { value } = event.target;
 
-					logger.error('onChange - value "%s"', currentUrl);
+			{hasScreenPermission &&
+			<React.Fragment>
+				<TextField
+					id='displayname'
+					label={intl.formatMessage({
+						id             : 'label.iframeAppUrl',
+						defaultMessage : 'External app URL to open for all (https only)'
+					})}
+					value={iframeUrl ?? currentUrl}
+					variant='outlined'
+					margin='normal'
+					disabled={iframeUrl}
+					onChange={(event) =>
+					{
+						const { value } = event.target;
 
-					setCurrentUrl(value.trim());
-				}}
-				fullWidth
-			/>
-			{iframeUrl &&
-			<Button
-				aria-label={intl.formatMessage({
-					id             : 'room.hideIframe',
-					defaultMessage : 'Hide external app'
-				})}
-				className={classes.button}
-				variant='contained'
-				color='secondary'
-				disabled={toggleIframeInProgress}
-				onClick={() => roomClient.toggleIframe(null)}
-			>
-				<FormattedMessage
-					id='room.hideIframe'
-					defaultMessage='Hide external app'
+						logger.error('onChange - value "%s"', currentUrl);
+
+						setCurrentUrl(value.trim());
+					}}
+					fullWidth
 				/>
-			</Button>
-			}
-			{!iframeUrl &&
-			<Button
-				aria-label={intl.formatMessage({
-					id             : 'room.showIframe',
-					defaultMessage : 'Show external app'
-				})}
-				className={classes.button}
-				variant='contained'
-				color='secondary'
-				disabled={toggleIframeInProgress || !isValidUrl}
-				onClick={() =>
-				{
-					roomClient.toggleIframe(currentUrl);
-					setCurrentUrl('');
-				}}
-			>
-				<FormattedMessage
-					id='room.showIframe'
-					defaultMessage='Show external app'
-				/>
-			</Button>
+				{iframeUrl &&
+				<Button
+					aria-label={intl.formatMessage({
+						id             : 'room.hideIframe',
+						defaultMessage : 'Hide external app'
+					})}
+					className={classes.button}
+					variant='contained'
+					color='secondary'
+					disabled={toggleIframeInProgress}
+					onClick={() => roomClient.toggleIframe(null)}
+				>
+					<FormattedMessage
+						id='room.hideIframe'
+						defaultMessage='Hide external app'
+					/>
+				</Button>
+				}
+				{!iframeUrl &&
+				<Button
+					aria-label={intl.formatMessage({
+						id             : 'room.showIframe',
+						defaultMessage : 'Show external app'
+					})}
+					className={classes.button}
+					variant='contained'
+					color='secondary'
+					disabled={toggleIframeInProgress || !isValidUrl}
+					onClick={() =>
+					{
+						roomClient.toggleIframe(currentUrl);
+						setCurrentUrl('');
+					}}
+				>
+					<FormattedMessage
+						id='room.showIframe'
+						defaultMessage='Show external app'
+					/>
+				</Button>
+				}
+			</React.Fragment>
 			}
 		</div>
 	);
@@ -214,19 +220,29 @@ ListMe.propTypes =
 	me                     : appPropTypes.Me.isRequired,
 	iframeUrl              : PropTypes.string,
 	toggleIframeInProgress : PropTypes.bool,
+	hasScreenPermission    : PropTypes.bool.isRequired,
 	settings               : PropTypes.object.isRequired,
 	classes                : PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-	me                     : state.me,
-	iframeUrl              : showIframeSelect(state),
-	toggleIframeInProgress : state.room.toggleIframeInProgress,
-	settings               : state.settings
-});
+const makeMapStateToProps = () =>
+{
+	const canShareScreen =
+		makePermissionSelector(permissions.SHARE_SCREEN);
+
+	const mapStateToProps = (state) => ({
+		me                     : state.me,
+		iframeUrl              : showIframeSelect(state),
+		toggleIframeInProgress : state.room.toggleIframeInProgress,
+		hasScreenPermission    : canShareScreen(state),
+		settings               : state.settings
+	});
+
+	return mapStateToProps;
+};
 
 export default withRoomContext(connect(
-	mapStateToProps,
+	makeMapStateToProps,
 	null,
 	null,
 	{

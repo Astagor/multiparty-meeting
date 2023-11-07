@@ -72,8 +72,13 @@ const ListMe = (props) =>
 
 	const [ currentUrl, setCurrentUrl ] = useState('');
 
+	logger.error('iframeUrl "%s"', iframeUrl);
+	logger.error('currentUrl "%s"', currentUrl);
+
 	const isValidUrl = () =>
 	{
+		logger.error('isValidUrl - currentUrl "%s"', currentUrl);
+
 		if (currentUrl === '')
 			return false;
 
@@ -93,6 +98,8 @@ const ListMe = (props) =>
 
 		return true;
 	};
+
+	logger.error('isValidUrl  %s', isValidUrl);
 
 	const picture = me.picture || EmptyAvatar;
 
@@ -143,6 +150,8 @@ const ListMe = (props) =>
 				onChange={(event) =>
 				{
 					const { value } = event.target;
+
+					logger.error('onChange - value "%s"', currentUrl);
 
 					setCurrentUrl(value);
 				}}

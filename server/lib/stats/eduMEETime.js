@@ -327,26 +327,14 @@ module.exports.peerJoined = function(sessionId, authId, name, email)
 {
 	logger.debug('Peer joined');
 
-	logger.error('Peer Astagor 1');
-	logger.error('Peer Astagor sessionId %s', sessionId);
-	logger.error('Peer Astagor authId %s', authId);
-	logger.error('Peer Astagor name %s', name);
-	logger.error('Peer Astagor email %s', email);
-
 	if (!config.edumeetime.enabled)
 		return;
-
-	logger.error('Peer Astagor 2');
 
 	if (!db)
 		throw new Error('DB not initialized!');
 
-	logger.error('Peer Astagor 3');
-
 	if (!authId)
 		return;
-
-	logger.error('Peer Astagor 4');
 
 	const now = Date.now();
 
